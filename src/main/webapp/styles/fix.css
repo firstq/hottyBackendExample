@@ -1,0 +1,230 @@
+.droppable{
+	border: #282828 1px solid;
+}
+
+.deletePage{
+	color: green;
+	display: none;
+}
+
+.panel {
+	padding: 20px;
+	width: 250px;
+	background: #eeeeee;
+	border: #282828 1px solid;
+	font-family: Georgia;
+}
+
+.col-md-offset-2 {
+    margin-left: 0;
+}
+
+/*.ui-tabs-panel {
+    display: block;
+    border-width: 0;
+    padding: 100%;
+    background: none;
+}*/
+.icon-italic {
+    background-image: url(http://localhost/paragraph-right.svg);
+}
+
+.align_center
+{
+	position: absolute;
+	top: 0;
+	right: 0;
+	bottom: 0;
+	left: 0;
+	margin: auto;
+}
+
+.align_right
+{
+	float:right;
+}
+
+#activeColor{
+	width: 38px;
+    height: 38px;
+}
+
+
+.menu{
+    text-align: center;
+}
+
+#nav{
+/*    width:97%;*/
+    font-weight: normal;
+    text-align: center;
+}
+
+#nav li{
+	display: inline;
+    float:left;
+    margin-right:30px; /*Сделать настраиваемым*/
+    position:relative;
+    margin-left: 5px;
+/*   // color: #454545; /*Сделать настраиваемым*/
+   // font-size:16px; /*Сделать настраиваемым*/
+    
+   // width: 97px;*/
+}
+
+#nav li a{
+    display:block;
+    padding:1px;
+    color:#669999; /*Сделать настраиваемым*/
+/*    background-color:transparent;*/ /*Сделать настраиваемым*/
+    font-size:15px; /*Сделать настраиваемым*/
+	background: tomato; /*Сделать настраиваемым*/
+    text-decoration: none;
+ /*    border-radius:2px;
+   //text-shadow:1px 1px 1px rgba(0,0,0,0.75); Сделать настраиваемым (Тень, просто галкой)
+   // -moz-border-radius:2px;
+   // -webkit-border-radius:2px;*/
+}
+
+#nav li a:hover{
+    color: #454545;
+    font-size:15px;
+    padding:1px;
+    text-decoration:none;
+/*    text-shadow:1px 1px 1px rgba(0,0,0,0.75);  
+    -moz-border-radius:2px;
+    -webkit-border-radius:2px;
+    border-radius:2px;*/
+}
+
+
+#nav li:hover a{
+    background:#333; /*Сделать настраиваемым*/
+    text-decoration: none;
+}
+
+#nav li ul li:hover a{
+    background:pink; /*Сделать настраиваемым*/
+    text-decoration: none;
+}
+
+/*--- ВЫПАДАЮЩИЕ ПУНКТЫ ---*/
+#nav ul{
+    list-style:none;
+    position:absolute;
+    left:-9999px; 
+    opacity:0; 
+/*    -webkit-transition:0.25s linear opacity; */
+}
+
+#nav li ul li ul{
+    list-style:none;
+    position: absolute;
+    left: -9999px;
+    top: 5px;
+    opacity:0;
+/*    -webkit-transition:0.25s linear opacity;*/
+}
+
+#nav li ul li ul li ul{
+    list-style:none;
+    position: absolute;
+    left: -9999px;
+    top: 5px;
+    opacity:0;
+/*    -webkit-transition:0.25s linear opacity;*/
+}
+
+#nav ul li{
+    padding-top:1px;
+    margin-right:0px;
+    float: right;
+}
+
+#nav ul a{
+    white-space:nowrap;
+    display:block;
+}
+
+#nav li:hover ul{
+    left:-40px;
+    opacity:1;
+}
+
+#nav li:hover ul a{
+    text-decoration:none;
+    -webkit-transition:-webkit-transform 0.075s linear;
+}
+
+#nav li:hover ul li a:hover{
+    color: #456314;/*Сделать настраиваемым*/
+    font-size:15px;/*Сделать настраиваемым*/
+    padding:1px;
+    text-decoration:none;
+/*    -moz-transform:scale(1.05);
+    -webkit-transform:scale(1.05);*/
+}
+
+#nav li:hover ul li:hover ul{
+    font-size:16px;
+    left: 47px; 
+    opacity:1;
+}
+
+#nav li:hover ul li ul{
+    left: -9999px;
+    opacity:1;
+}
+
+#nav li:hover ul li:hover ul li:hover ul{
+    font-size:16px;
+    left: 47px;
+    opacity:1;
+}
+
+#nav li:hover ul li:hover ul li ul{
+    left: -9999px;
+    opacity:1;
+}
+
+
+/*
+* News stiles
+*/
+
+.mone_news_button {
+    text-align: center;
+}
+
+.mone_news_button:hover {
+    background:#333;
+}
+
+.mone_news_button a{
+    display:block;
+    padding:1px;
+    color:#669999;
+    background-color:transparent;
+    font-size:14px;
+    text-decoration:none;
+    text-shadow:1px 1px 1px rgba(0,0,0,0.75);
+    -moz-border-radius:2px;
+    -webkit-border-radius:2px;
+    border-radius:2px;
+}
+
+.mone_news_button a:hover{
+    color: #454545;
+    font-size:16px;
+    padding:1px;
+    text-decoration:none;
+    text-shadow:1px 1px 1px rgba(0,0,0,0.75);  
+    -moz-border-radius:2px;
+    -webkit-border-radius:2px;
+    border-radius:2px;
+}
+
+.menu_settings_text{
+	font-size:12px;
+	margin: 15px 15px 15px 15px;
+}
