@@ -55,7 +55,7 @@ public class GenerateData {
 			
 			
 			obj.setName("name_"+i);
-			obj.setStyles("position: absolute;");
+			obj.setStyles("width: 300px; height: 200px");
 			obj.setTopLevel(true);
 			
             try {
@@ -69,10 +69,9 @@ public class GenerateData {
                 throw new IllegalStateException(msg.toString(), e);
             }
             obj.flush();
-			System.out.println("BEFORE ITEMS FOREACH");
+			
 			MenuItem saveditem=null;
 			for (MenuItem item : items) {
-				System.out.println("item="+item);
 				item.setParentItem(saveditem);
 				item.persist();
 				item.flush();
@@ -90,6 +89,7 @@ public class GenerateData {
                 new ClassPathXmlApplicationContext("classpath*:/META-INF/spring/applicationContext*.xml");
         applicationContext.registerShutdownHook();
 		if(data == null || data.isEmpty()) createContent();
+		System.out.println("Finish");
 	}
 	
 }
