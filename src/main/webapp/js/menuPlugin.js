@@ -34,18 +34,18 @@
 					name : menuElement.children('a').text(),
 					link : menuElement.children('a').attr("href"),
 					priority : menuElement.attr('priority'),
-					topLevel : menuElement.parent().hasClass('align_center')
+					toplevel : menuElement.parent().hasClass('align_center')
 				};
 				options.prepareElement(menuElement,v);
 				$.each(menuElement.children('ul').children('li'), function(k,v){ options.activateElements($(v)) });
 			},
 			prepareElement : function(elem,v){
 				var preparedElement = elem
-							.attr('id', v.id.toString().replace(/\D+/g,'')).attr('priority', v.priority)
+							.attr('id', v.id+"menuItem"+options.thisBlock.attr("id")).attr('priority', v.priority)
 							.css(options.navli).css("border", "1px dashed #000")
 							.blockPlugin({
 								colors: "Not used",
-								popup: $("<div id='menuItemBlock"+v.id.toString().replace(/\D+/g,'')+"Popup' title='Параметры'></div>").append($('#menuItemForm').clone().removeClass('hidden')),
+								popup: $("<div id='menuItemBlock"+v.id+"menuItem"+options.thisBlock.attr("id")+"Popup' title='Параметры'></div>").append($('#menuItemForm').clone().removeClass('hidden')),
 								popupOptions : {
 									autoOpen: false,
 									width: '500px',
@@ -53,16 +53,16 @@
 										{
 											text: "Ok",
 											click: function() {
-												var currentElement = $('#'+v.id.toString().replace(/\D+/g,'')),
-												name = $('#menuItemBlock'+v.id.toString().replace(/\D+/g,'')+'Popup').find('form').find('input[name="name"]').val(),
-												link = $('#menuItemBlock'+v.id.toString().replace(/\D+/g,'')+'Popup').find('form').find('input[name="link"]').val(),
-												priority = $('#menuItemBlock'+v.id.toString().replace(/\D+/g,'')+'Popup').find('form').find('input[name="priority"]').val().toString().replace(/\D+/g,'');
+												var currentElement = $('#'+v.id+"menuItem"+options.thisBlock.attr("id")),
+												name = $('#menuItemBlock'+v.id+"menuItem"+options.thisBlock.attr("id")+'Popup').find('form').find('input[name="name"]').val(),
+												link = $('#menuItemBlock'+v.id+"menuItem"+options.thisBlock.attr("id")+'Popup').find('form').find('input[name="link"]').val(),
+												priority = $('#menuItemBlock'+v.id+"menuItem"+options.thisBlock.attr("id")+'Popup').find('form').find('input[name="priority"]').val().toString().replace(/\D+/g,'');
 												
 												currentElement.children('a').text(name);
 												currentElement.children('a').attr('href',link);
 												currentElement.attr("priority", priority);
 												//Top
-												if($('#menuItemBlock'+v.id.toString().replace(/\D+/g,'')+'Popup').find('form').find('input[name="istop"]').is(':checked')) {
+												if($('#menuItemBlock'+v.id+"menuItem"+options.thisBlock.attr("id")+'Popup').find('form').find('input[name="istop"]').is(':checked')) {
 													if(currentElement.children('ul').length != 1){
 														menu.children('ul').css(options.isVertical ? options.vertnav : options.nav);
 														options.appendByPriority(menu,currentElement, true);
@@ -73,8 +73,8 @@
 													}
 												} else {
 													//Переносим по адресу родителя
-													var selectedIndex = $('#menuItemBlock'+v.id.toString().replace(/\D+/g,'')+'Popup').find('form').find('select[name="menuItemParent"]').prop('selectedIndex');
-													var selected = $('#menuItemBlock'+v.id.toString().replace(/\D+/g,'')+'Popup').find('form').find('select[name="menuItemParent"]').children()[selectedIndex];
+													var selectedIndex = $('#menuItemBlock'+v.id+"menuItem"+options.thisBlock.attr("id")+'Popup').find('form').find('select[name="menuItemParent"]').prop('selectedIndex');
+													var selected = $('#menuItemBlock'+v.id+"menuItem"+options.thisBlock.attr("id")+'Popup').find('form').find('select[name="menuItemParent"]').children()[selectedIndex];
 													
 													//Может не быть ul
 													if(menu.find("#"+$(selected).attr('value')).children('ul').length == 0){
@@ -84,13 +84,13 @@
 												}
 												options.setNormalMargin(currentElement.removeAttr("style").css(options.navli_hover).css("border", "1px solid #27e6ed"));
 												
-												$('#menuItemBlock'+v.id.toString().replace(/\D+/g,'')+'Popup').dialog( "close" );
+												$('#menuItemBlock'+v.id+"menuItem"+options.thisBlock.attr("id")+'Popup').dialog( "close" );
 											}
 										},
 										{
 											text: "Выход",
 											click: function() {
-												$('#menuItemBlock'+v.id.toString().replace(/\D+/g,'')+'Popup').dialog( "close" );
+												$('#menuItemBlock'+v.id+"menuItem"+options.thisBlock.attr("id")+'Popup').dialog( "close" );
 											}
 										}
 									]
@@ -101,11 +101,11 @@
 								items: [{
 										data:{name: "Изменить",
 										click: function(){
-											var currentDialogBlock = $('#menuItemBlock'+v.id.toString().replace(/\D+/g,'')+'Popup'),
+											var currentDialogBlock = $('#menuItemBlock'+v.id+"menuItem"+options.thisBlock.attr("id")+'Popup'),
 													priorityInput = currentDialogBlock.find('form').find('input[name="priority"]');
-											currentDialogBlock.find('form').find('input[name="name"]').val($('#'+v.id.toString().replace(/\D+/g,'')).children('a').text());
-											currentDialogBlock.find('form').find('input[name="link"]').val($('#'+v.id.toString().replace(/\D+/g,'')).children('a').attr('href'));
-											priorityInput.val($('#'+v.id.toString().replace(/\D+/g,'')).attr('priority'));
+											currentDialogBlock.find('form').find('input[name="name"]').val($('#'+v.id+"menuItem"+options.thisBlock.attr("id")).children('a').text());
+											currentDialogBlock.find('form').find('input[name="link"]').val($('#'+v.id+"menuItem"+options.thisBlock.attr("id")).children('a').attr('href'));
+											priorityInput.val($('#'+v.id+"menuItem"+options.thisBlock.attr("id")).attr('priority'));
 											
 											priorityInput.get(0).onkeypress = function(e) {
 													e = e || event;
@@ -125,25 +125,25 @@
 												  }
 											//Выбрать если верхний уровень
 											currentDialogBlock.find('form').find('input[name="istop"]').attr('checked', 
-												$('#'+v.id.toString().replace(/\D+/g,'')).parent().hasClass('align_center'));
+												$('#'+v.id+"menuItem"+options.thisBlock.attr("id")).parent().hasClass('align_center'));
 											//Заполнить select и выбрать родителя
 											var menuItemParent = currentDialogBlock.find('form').find('select[name="menuItemParent"]');
 											menuItemParent.html('');
 											menu.find('li').each(function (){
 												//Искл. самое себя
-												if($(this).children('a').text()!=$('#'+v.id.toString().replace(/\D+/g,'')).children('a').text()){
+												if($(this).children('a').text()!=$('#'+v.id+"menuItem"+options.thisBlock.attr("id")).children('a').text()){
 													var newOption = $('<option>'+$(this).children('a').text()+'</option>').attr('value',$(this).attr('id'));
-													if($('#'+v.id.toString().replace(/\D+/g,'')).parent().parent().get(0) === $(this).get(0)) newOption.attr('selected',true);
+													if($('#'+v.id+"menuItem"+options.thisBlock.attr("id")).parent().parent().get(0) === $(this).get(0)) newOption.attr('selected',true);
 													menuItemParent.append(newOption);
 												}
 											});
-											$('#menuItemBlock'+v.id.toString().replace(/\D+/g,'')+'Popup').dialog( "open" );
+											$('#menuItemBlock'+v.id+"menuItem"+options.thisBlock.attr("id")+'Popup').dialog( "open" );
 										}},
 										},
 										{
 										data:{name: "Удалить",
 										click: function(){
-											var removedElement = $("#"+v.id.toString().replace(/\D+/g,''));
+											var removedElement = $("#"+v.id+"menuItem"+options.thisBlock.attr("id"));
 											if(removedElement.next().length != 0 && removedElement.next()[0].localName == "br") removedElement.next().remove();
 											removedElement.remove();
 											$(this).parent().hide();
@@ -169,7 +169,7 @@
 			},
 			topMaxWidth : 1,
 			isVertical : false,
-            url:"menuitems",
+            url:"rest/service/menuitems/",
 			vertnav: {
 				'width' : '2%',
 				'font-weight' : 'normal',
@@ -283,8 +283,7 @@
 						{
 							data:{name: "Параметры",
 							click: function(){
-
-								blockOptions.popup.find('form').find('input[name="width"]').val(blockOptions.thisBlock.css('width'));
+								 blockOptions.popup.find('form').find('input[name="width"]').val(blockOptions.thisBlock.css('width'));
 								blockOptions.popup.find('form').find('input[name="height"]').val(blockOptions.thisBlock.css('height'));
 								blockOptions.popup.find('form').find('#showColors').css('background',blockOptions.thisBlock.css('background'));
 								blockOptions.popup.find('input[name="isvertical"]').prop('checked', options.isVertical);
@@ -300,9 +299,10 @@
 									blockOptions.thisBlock.children('ul').children('li').children('a').css('font-weight')==='bold' ? 'gray' : 'none');
 								blockOptions.popup.find('#setItalic').css('background-color',
 									blockOptions.thisBlock.children('ul').children('li').children('a').css('font-style')==='italic' ? 'gray' : 'none');
-								blockOptions.popup.find('form').find('input[name="size"]').val(parseInt(blockOptions.thisBlock.children('ul').children('li').children('a').css('font-size').replace(/\D+/g,'') ));
-								blockOptions.popup.find('form').find('input[name="marginright"]').val(parseInt(blockOptions.thisBlock.children('ul').children('li').css('margin-right').replace(/\D+/g,'') ));	
-
+								if(options.thisBlock.children("ul").children().length != 0){
+									blockOptions.popup.find('form').find('input[name="size"]').val(parseInt(blockOptions.thisBlock.children('ul').children('li').children('a').css('font-size').replace(/\D+/g,'') ));
+									blockOptions.popup.find('form').find('input[name="marginright"]').val(parseInt(blockOptions.thisBlock.children('ul').children('li').css('margin-right').replace(/\D+/g,'') ));	
+								}
 
 								blockOptions.popup.dialog( "open" );
 								blockOptions.parentElement.hide();
@@ -479,10 +479,10 @@
 										name : $(this).find('form').find('input[name="name"]').val(),
 										link : $(this).find('form').find('input[name="link"]').val(),
 										priority : $(this).find('form').find('input[name="priority"]').val().toString().replace(/\D+/g,''),
-										topLevel : $(this).find('form').find('input[name="istop"]').is(':checked')
+										toplevel : $(this).find('form').find('input[name="istop"]').is(':checked')
 									},
 									newItem = options.prepareElement($('<li>'),v);
-									options.appendByPriority( v.topLevel ? blockOptions.thisBlock : blockOptions.thisBlock.find("#"+$(selected).attr('value')), newItem, v.topLevel);
+									options.appendByPriority( v.toplevel ? blockOptions.thisBlock : blockOptions.thisBlock.find("#"+$(selected).attr('value')), newItem, v.toplevel);
 									$( this ).dialog( "close" );
 									$(this).find('form').find('input').val("");
 								}
@@ -514,24 +514,17 @@
 
 				return null;
 			  },
-			
             buildMenu = function(menuElements, level){
-				//Для вертикальности добавить пустой верхний li ul
-					if(options.isVertical){
-						//menu.css()
-					}
-					
                 var notAdded = [];
                 $.each(menuElements, function(k,v){ 
 					//Add elements to select and choose real parent
 					preparedElement = options.prepareElement($('<li>'),v);
-                    if(v.topLevel){
+                    if(v.toplevel){
                         menu.children('ul').css(options.isVertical ? options.vertnav : options.nav).append(preparedElement);
 						//if(parseInt(preparedElement.css("width").toString().replace(/\D+/g,''))>options.topMaxWidth) options.topMaxWidth=parseInt(preparedElement.css("width").toString().replace(/\D+/g,''));
-                    } else if(typeof(v.parent) == 'object'){
+                    } else if(typeof(v.parentItem) == 'object'){
 						preparedElement.css("margin-left",'-30px');
-						var parentElement = $('#'+v.parent.id.toString().replace(/\D+/g,''));
-						
+						var parentElement = $('#'+v.parentItem.id+"menuItem"+options.thisBlock.attr("id"));
                         if(parentElement.length !== 0){
                             if(parentElement.children('ul').length === 0){
 								var newNavUl = options.navul;
@@ -554,16 +547,16 @@
                     }
                 });
                 
-                if(notAdded.length) buildMenu(notAdded, ++level);
+                if(notAdded.length && level<5) buildMenu(notAdded, ++level);
                 return false;
             };
-		
+		options.thisBlock.append($('<ul class="align_center"> </ul>'));
 		if(menu.children('ul').children().length != 0){
 			$.each(menu.children('ul').children('li'), function(k,v){ options.activateElements($(v)) });
 		} else $.ajax({
                 crossDomain: true,
                 type: "GET",
-                url: options.url,
+                url: options.url+options.thisBlock.attr("id"),
                 dataType: "json",
                 success: function( data ) {
 						buildMenu(data,0);

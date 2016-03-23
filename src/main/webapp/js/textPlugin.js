@@ -33,9 +33,7 @@
 								options.popup.find('form').find('input[name="width"]').val(self.css('width'));
 								options.popup.find('form').find('input[name="height"]').val(self.css('height'));
 								options.popup.find('form').find('input[type="button"]').css('background',self.css('background'));
-								//Шрифт вытащить
-								console.log(self.css('font-size'));
-								console.log(self.css('font-family').replace(/'+/g,""));
+								
 								options.popup.find('select[name="textFontFamilySelector"]').val(self.css('font-family').replace(/'+/g,""));
 								options.popup.find('form').find('input[name="size"]').val(parseInt(self.css('font-size').replace(/\D+/g,'')));
 								

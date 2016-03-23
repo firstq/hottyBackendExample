@@ -159,11 +159,7 @@
 		var self = $(this), inside=false,
 				prepareSocialBlock = function(socialTypes){
 					$.each(socialTypes, function(k,v){
-						console.log(v);
-						//Из полученных добавить иконки с сылками в self
 						self.append($("<a>"+v.name+"</a>").attr("id", v.id).attr("href",v.name));
-						//+ добавить все в popup блок socialNetTypesContainer
-						console.log(options.popup.find("#socialNetTypesContainer"));
 						options.popup.find("#socialNetTypesContainer")
 								.append(
 									$('<input type="checkbox">')
@@ -177,8 +173,7 @@
 					});
 				};
 		self.blockPlugin(options);
-		//вытаскивать из базы соцсети и в popup предлагать выбрать какие выводить (по умолчанию выводить все)
-		//var 
+		
 		$.ajax({
                 crossDomain: true,
                 type: "GET",

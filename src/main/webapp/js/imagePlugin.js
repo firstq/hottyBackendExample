@@ -28,7 +28,7 @@
 		},
 		defaultOptions = {
 			thisBlock : $(this),
-			contextmenu: function(e){ console.log("contextmenu from videoPlugin")
+			contextmenu: function(e){ 
 				$(document.body).click();
 				e.preventDefault();
 				var offset = $(this).offset();
@@ -221,8 +221,7 @@
 		options = $.extend(defaultOptions, options);
 		var self = $(this), inside=false, files;
 		self.blockPlugin(options);
-		//Если link не указан, показывать кнопку вызова popup
-		//console.log(options.popup.find("#imagePreView").children());
+		
 		if(options.popup.find("#imagePreView").children().length == 0) 
 			self
 				.append($("<INPUT Type='button' href='' value='Загрузить картинку'/>").css('height','40px')
@@ -290,9 +289,6 @@
 											options.popup.find("#loadedImgHeight").text(resizedData.height);
 											
 										},
-//										complete: function( resp ){
-//											console.log(resp);
-//										}
 									});
 								});
 							var originalButton = $('<INPUT Type="BUTTON" class="form-control" value="Оригинал"/>').click(function(){

@@ -19,12 +19,6 @@
     margin-left: 0;
 }
 
-/*.ui-tabs-panel {
-    display: block;
-    border-width: 0;
-    padding: 100%;
-    background: none;
-}*/
 .icon-italic {
     background-image: url(http://localhost/paragraph-right.svg);
 }
@@ -63,27 +57,18 @@
 #nav li{
 	display: inline;
     float:left;
-    margin-right:30px; /*Сделать настраиваемым*/
+    margin-right:30px; 
     position:relative;
     margin-left: 5px;
-/*   // color: #454545; /*Сделать настраиваемым*/
-   // font-size:16px; /*Сделать настраиваемым*/
-    
-   // width: 97px;*/
 }
 
 #nav li a{
     display:block;
     padding:1px;
-    color:#669999; /*Сделать настраиваемым*/
-/*    background-color:transparent;*/ /*Сделать настраиваемым*/
-    font-size:15px; /*Сделать настраиваемым*/
-	background: tomato; /*Сделать настраиваемым*/
+    color:#669999; 
+    font-size:15px; 
+	background: tomato;
     text-decoration: none;
- /*    border-radius:2px;
-   //text-shadow:1px 1px 1px rgba(0,0,0,0.75); Сделать настраиваемым (Тень, просто галкой)
-   // -moz-border-radius:2px;
-   // -webkit-border-radius:2px;*/
 }
 
 #nav li a:hover{
@@ -91,20 +76,16 @@
     font-size:15px;
     padding:1px;
     text-decoration:none;
-/*    text-shadow:1px 1px 1px rgba(0,0,0,0.75);  
-    -moz-border-radius:2px;
-    -webkit-border-radius:2px;
-    border-radius:2px;*/
 }
 
 
 #nav li:hover a{
-    background:#333; /*Сделать настраиваемым*/
+    background:#333;
     text-decoration: none;
 }
 
 #nav li ul li:hover a{
-    background:pink; /*Сделать настраиваемым*/
+    background:pink;
     text-decoration: none;
 }
 
@@ -157,12 +138,10 @@
 }
 
 #nav li:hover ul li a:hover{
-    color: #456314;/*Сделать настраиваемым*/
-    font-size:15px;/*Сделать настраиваемым*/
+    color: #456314;
+    font-size:15px;
     padding:1px;
     text-decoration:none;
-/*    -moz-transform:scale(1.05);
-    -webkit-transform:scale(1.05);*/
 }
 
 #nav li:hover ul li:hover ul{

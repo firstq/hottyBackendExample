@@ -7,7 +7,7 @@
 		 },
 		defaultOptions = {
 			thisBlock : $(this),
-			contextmenu: function(e){ console.log("contextmenu from videoPlugin")
+			contextmenu: function(e){ 
 				$(document.body).click();
 				e.preventDefault();
 				var offset = $(this).offset();
