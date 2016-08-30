@@ -14,6 +14,7 @@
 								});
 			return top;
 		},
+				
 		//TO DO ВЫНЕСТИ В ОТДЕЛЬНЫЙ ФАЙЛ!!!
 		makeNewTopForLastOwnerChildrens = function(movable){
 			var isAfterMovable = false, newTop = parseInt(movable.css('height').match(/\d+/));
@@ -27,6 +28,7 @@
 			return top;
 		},
 		defaultOptions = {
+			restUrl: "/imageblocks/",
 			thisBlock : $(this),
 			contextmenu: function(e){ 
 				$(document.body).click();
@@ -51,120 +53,35 @@
 						{
 							data:{name: "Параметры",
 							click: function(){
-								options.popup.find('form').find('input[name="width"]').val(self.css('width'));
+								options.popup.find('form').find('input[name="width"]').val(self.get(0).style.width);
 								options.popup.find('form').find('input[name="height"]').val(self.css('height'));
 								options.popup.find('form').find('input[type="button"]').css('background',self.css('background'));
+								
+								options.popup.find('form').find('textarea[name="classes"]').text(self.attr('class'));
+								//TO DO: Вытащить background image
+								if(typeof(self.css("background-image")) != "undefined" && self.css("background-image") != ""){
+									var imagePreView = options.popup.find("#imagePreView"), url=self.css("background-image").replace("url(","").replace(")","");
+									imagePreView.append($('<img src="'+url+'" width="'+297+'px" alt="'+url+'" />'));
+								}
+								
 								options.popup.dialog( "open" );
 								options.parentElement.hide();
 							}}
 						},
-						{
-							data:{name: "Копировать",
-							click: function(){
-								//Исключить повторение копий
-								var clone = self.clone();
-								var idn = clone.attr('id')+'Copy';
-								clone.children('div').each(function(){
-									$(this).remove();
-								});
-								clone.attr('id', idn);
-								document.body.context_menu_plugin_buffer={clone:clone,
-									clones: typeof(document.body.context_menu_plugin_buffer) != "undefined" ? document.body.context_menu_plugin_buffer.clones : [], 
-									type:"image",};
-								options.parentElement.hide();
-							}}
-						},
-						{
-							data:{name: "Вставить",
-							click: function(){
-								if(typeof(document.body.context_menu_plugin_buffer) != 'undefined'){
-									
-									var child_level = parseInt(self.attr('child_level'));
-									var pastedElement = document.body.context_menu_plugin_buffer.clone.clone();
-									document.body.context_menu_plugin_buffer.clones.push(pastedElement);
-									var idn = pastedElement.attr('id')+document.body.context_menu_plugin_buffer.clones.length, top=makeNewTopForCurent(0,self);
-										pastedElement.attr('id', idn)
-										.draggable(options.dragAble)
-										.resizable({animateDuration: "fast"})
-										.droppable(options.droppAble)
-										.css("top",top+"px")
-										.css("left","0px").attr("parent-id",self.attr("id")).attr("child_level",++child_level).appendTo(self);
-									if(typeof(document.body.context_menu_plugin_buffer.type) != undefined && document.body.context_menu_plugin_buffer.type == "image" ){
-										//перенести настройки popup
-										pastedElement.imagePlugin({
-											thisBlock : pastedElement,
-											popup: $("<div id='imageBlock"+idn+"Popup' title='Параметры'></div>").append($('#imageForm').clone().removeClass('hidden'))});
-									} else if(typeof(document.body.context_menu_plugin_buffer.type) != undefined && document.body.context_menu_plugin_buffer.type == "menu" ){
-										//перенести настройки popup
-										pastedElement.menuPlugin({});
-									} else if(typeof(document.body.context_menu_plugin_buffer.type) != undefined && document.body.context_menu_plugin_buffer.type == "video" ){
-										pastedElement.videoPlugin({
-											thisBlock : pastedElement,
-											popup: $("<div id='videoBlock"+idn+"Popup' title='Параметры'></div>").append($('#videoForm').clone().removeClass('hidden'))});
-									} else pastedElement.blockPlugin({popup: $("<div id='"+idn+"Popup' title='Параметры'></div>").append($('#simpleForm').clone().removeClass('hidden'))});
-										
-								}
-								options.parentElement.hide();
-							}}
-						},
-						{
-							data:{name: "Удалить",
-							click: function(){
-								//makeNewTopForLastOwnerChildrens(self);
-								self.remove();
-								options.parentElement.remove();
-								options.popup.remove();
-							}}
-						},
+						null,
+//						{
+//							data:{name: "Копировать",
+//							click: function(){
+//								var clone = self.clone().attr('id', '');
+//								document.body.context_menu_plugin_buffer={
+//									clone:clone, 
+//									options: options,
+//									childrens: options.prepareChildrensForCopy(clone)
+//								}; 
+//								options.parentElement.hide();
+//							}}
+//						}
 					],
-					dragAble : {
-						drag: function() {
-							if(inside){
-								$(this).css("border", "1px solid #27e6ed");
-							} else $(this).css("border", "1px dashed #27e6ed");
-						},
-						start: function() {
-							$(this).css("border", "1px dashed #27e6ed");
-						},
-						stop: function() {
-							$(this).css("border", "1px dashed #000");
-						},
-						containment: "parent", 
-						scope: "block"
-					},
-					droppAble : {
-						drop: function(eventb, uib) {
-							//Если элемент уже в другом элементе надо ограничить scope его уровнем
-							uib.draggable.css("border", "1px dashed #000");
-							var child_level = parseInt(uib.draggable.attr('child_level'));
-							if($(this).attr("child_level") >= child_level && $(this).attr("id") !== uib.draggable.attr('parent-id')) {
-								child_level++;
-								var newDraggable = uib.draggable.attr("parent-id",$(this).attr("id")), top=makeNewTopForCurent(0,$(this));
-								makeNewTopForLastOwnerChildrens(newDraggable);
-								newDraggable.draggable(options.dragAble)
-									.resizable({animateDuration: "fast"})
-									.droppable(options.droppAble)
-									.css("top",top+"px")
-									.css("left","0px")
-									.resizable({animateDuration: "fast"})
-									//.blockPlugin({popup: $("<div id='"+uib.draggable.attr('id')+"Popup' title='Параметры'></div>").append($('#simpleForm').clone().removeClass('hidden'))})
-									.attr('child_level',child_level)
-									.appendTo($(this));
-								}
-						},
-						over: function(eventb, uib) {
-//							uib.draggable.css("border", "1px solid #27e6ed");
-							$(this).css("border", "1px solid #27e6ed");
-							inside = true;
-						},
-						out: function(eventb, uib) {
-							uib.draggable.css("border", "1px dashed #000");
-							$(this).css("border", "1px dashed #000");
-							inside = false;
-						},
-						tolerance: "fit",
-						scope: "block"
-					},
 					popupOptions : {
 						autoOpen: false,
 						width: options.popupWidth+"px",
@@ -218,43 +135,34 @@
 						]
 					}
         };
+		
 		options = $.extend(defaultOptions, options);
+		
 		var self = $(this), inside=false, files;
 		self.blockPlugin(options);
-		
-		if(options.popup.find("#imagePreView").children().length == 0) 
-			self
-				.append($("<INPUT Type='button' href='' value='Загрузить картинку'/>").css('height','40px')
-							.css('width','270px')
-							.addClass('align_center')
-							.click(function(){
-								options.popup.find('form').find('input[name="width"]').val(self.css('width'));
-								options.popup.find('form').find('input[name="height"]').val(self.css('height'));
-								options.popup.find('form').find('input[type="button"]').css('background',self.css('background'));
-								options.popup.dialog( "open" );
-							}));
 		
 		options.popup.find('input[type=file]').change(function(){
 			files = this.files;
 		});
 		
 		options.popup.find("#downloadBlockImage").click(function( event ){
-			
 			if(typeof(files) == "undefined" || files.length == 0){
 				alert("Файл не выбран!");
 				return false;
 			}
 			var dataForm = new FormData(options.popup.find('form')[0]);
 			dataForm.append('file',files[0]);
-			
 			$.ajax({
-				url: 'imageblocks/uploadimg',
+				url: 'uploading',
 				type: 'POST',
 				data: dataForm,
 				cache: false,
 				dataType: 'json',
 				processData: false, 
 				contentType: false, 
+				beforeSend: function(){
+					//TO DO: Вставлять полосу загрузки
+				},
 				success: function( resp ){
 					if(resp.result){
 						var imagePreView = options.popup.find("#imagePreView");
@@ -268,27 +176,48 @@
 						options.popup.find("#forResizeButton").children().remove();
 						if(width !=resp.width || height !=resp.height){
 							//Если что-то 100% то оставляем как есть
-							var newWidth = (width === "100%") ? resp.width : width,
-								newHeight = (height === "100%") ? resp.height : height;
+							//TO DO Изменить логику расчёта размера. Что если указано в процентах?
 							
-							var resizeButton = $('<INPUT Type="BUTTON" class="form-control" value="Под размер блока"/>').click(function(){
-									$.ajax({
-										url: 'imageblocks/resize',
-										type: 'POST',
-										dataType: 'json',
-										data: { "filename":resp.filename, "widthn":newWidth, "heightn":newHeight },
-										success: function( resizedData ){
-											if(!resizedData.result){
-												alert("Не удалось загрузить файл! Возможно он не является картинкой.");
-												return false;
+							var resizeButton = $('<INPUT Type="BUTTON" class="form-control" value="Изменить размер"/>').click(function(){
+									var resizePopup = $("<div title='Указать размеры'></div>").append($("#resizeForm").clone().removeClass("hidden"));
+									resizePopup.dialog({
+										autoOpen: true,
+										width: "400px",
+										buttons: [
+											{
+												text: "Ok",
+												click:function(){
+													var newWidth = resizePopup.find("input[name='width']").val(), //width, (width === "100%") ? resp.width : self.width()
+														newHeight =  resizePopup.find("input[name='height']").val();//height; (height === "100%") ? resp.height : self.height()
+
+													$.ajax({
+														url: 'resize',
+														type: 'POST',
+														dataType: 'json',
+														data: { "filename":resp.filename, "widthn":newWidth, "heightn":newHeight },
+														success: function( resizedData ){
+															if(!resizedData.result){
+																alert("Не удалось загрузить файл! Возможно он не является картинкой.");
+																return false;
+															}
+
+															imagePreView.children().remove();
+															imagePreView.append($('<img src="'+resizedData.url+'" width="'+297+'px" alt="'+resizedData.url+'" />'));
+															options.popup.find("#loadedImgWidth").text(resizedData.width);//height="'++'"
+															options.popup.find("#loadedImgHeight").text(resizedData.height);
+
+														},
+													});
+													$( this ).remove();
+												}
+											},
+											{
+												text: "Выход",
+												click: function() {
+													$( this ).remove();
+												}
 											}
-											
-											imagePreView.children().remove();
-											imagePreView.append($('<img src="'+resizedData.url+'" width="'+297+'px" alt="'+resizedData.url+'" />'));
-											options.popup.find("#loadedImgWidth").text(resizedData.width);//height="'++'"
-											options.popup.find("#loadedImgHeight").text(resizedData.height);
-											
-										},
+										]
 									});
 								});
 							var originalButton = $('<INPUT Type="BUTTON" class="form-control" value="Оригинал"/>').click(function(){
@@ -303,8 +232,10 @@
 							options.popup.find("#forResizeButton").append(resizeButton);
 						}
 					} else {
-						alert("Не удалось загрузить файл! Возможно он не является картинкой.")
+						alert("Не удалось загрузить файл! Возможно он не является картинкой.");
 					}
+				},
+				error: function( resp ){
 				}
 		});
 		});

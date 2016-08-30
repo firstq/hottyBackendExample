@@ -6,21 +6,10 @@
 			 return re.test(url);
 		 },
 		defaultOptions = {
+			restUrl: "/textblocks/",
+			hidePanel: true,
 			thisBlock : $(this),
-			contextmenu: function(e){
-				$(document.body).click();
-				e.preventDefault();
-				var offset = $(this).offset();
-				var x = e.pageX;
-				var y = e.pageY;
-				options.parentElement.css("top",y+"px").css("left", x+"px").toggle();
-				if(options.parentElement.is(':visible')){
-					self.css("border", "1px dashed #27e6ed");
-				} else {
-					self.css("border", "1px dashed #000");
-				}
-				e.stopPropagation();
-			},
+			savedText : "",
 			resizable : true,
 			//popupWidth: 600,
 			parentElement:$('<ul style="width:100px;position: absolute;"></ul>'),
@@ -30,9 +19,10 @@
 						{
 							data:{name: "Параметры",
 							click: function(){
-								options.popup.find('form').find('input[name="width"]').val(self.css('width'));
+								options.popup.find('form').find('input[name="width"]').val(self.get(0).style.width);
 								options.popup.find('form').find('input[name="height"]').val(self.css('height'));
 								options.popup.find('form').find('input[type="button"]').css('background',self.css('background'));
+								options.popup.find('form').find('textarea[name="classes"]').text(self.attr('class'));
 								
 								options.popup.find('select[name="textFontFamilySelector"]').val(self.css('font-family').replace(/'+/g,""));
 								options.popup.find('form').find('input[name="size"]').val(parseInt(self.css('font-size').replace(/\D+/g,'')));
@@ -41,47 +31,21 @@
 								options.parentElement.hide();
 							}}
 						},
+						null,
 						{
 							data:{name: "Копировать",
 							click: function(){
-								//Исключить повторение копий
-								var clone = self.clone();
-								var idn = clone.attr('id')+'Copy';
-								clone.children('div').each(function(){
-									$(this).remove();
-								});
-								clone.attr('id', idn);
-								document.body.context_menu_plugin_buffer={clone:clone,
-									clones: typeof(document.body.context_menu_plugin_buffer) != "undefined" ? document.body.context_menu_plugin_buffer.clones : [], 
-									type:"text",};
+								//Здесь необходимо сохранять содержимое contentiable и textarea но не копировать их
+								var clone = self.clone().attr('id', '').children().remove().end();
+								document.body.context_menu_plugin_buffer={
+									clone:clone, 
+									options: options
+								};
 								options.parentElement.hide();
 							}}
 						},
-						{
-							data:{name: "Удалить",
-							click: function(){
-								//makeNewTopForLastOwnerChildrens(self);
-								self.remove();
-								options.parentElement.remove();
-								options.popup.remove();
-							}}
-						},
+						null
 					],
-					dragAble : {
-						drag: function() {
-							if(inside){
-								$(this).css("border", "1px solid #27e6ed");
-							} else $(this).css("border", "1px dashed #27e6ed");
-						},
-						start: function() {
-							$(this).css("border", "1px dashed #27e6ed");
-						},
-						stop: function() {
-							$(this).css("border", "1px dashed #000");
-						},
-						containment: "parent", 
-						scope: "block"
-					},
 					droppAble : {
 						drop: function(eventb, uib) {
 							//Если элемент уже в другом элементе надо ограничить scope его уровнем
@@ -165,16 +129,20 @@
 		options = $.extend(defaultOptions, options);
 		var self = $(this), 
 				inside=false, 
-				stikPanelOptions={width: "100px", position: "relative", right: "-100px", top:"0px"},
-				textareaPanelOptions={width: "100%", height: "100%", position: "absolute", left: "0px", top:"0px"},
-				editablePanelOptions={width: "100%", height: "100%", position: "absolute", left: "0px", top:"0px"};
+				stikPanelOptions={width: "100%", position: "relative", left: "0px", top:"0px"},
+				textareaPanelOptions={width: "100%", height: "100%", /*position: "absolute", */left: "0px", top:"0px"},
+				editablePanelOptions={width: "100%", height: "100%", /*position: "absolute",*/ left: "0px", top:"0px"};
 		self.blockPlugin(options);
 		self.css('font-size',"15px");
-		var panel = $("#textBlockPanel").clone().removeClass("hidden").css(stikPanelOptions).addClass('align_right'),
+		var panel = $("#textBlockPanel").clone().removeClass("hidden").css(stikPanelOptions),
 				editableDiv = $("<div></div>").attr("contenteditable",true).css(editablePanelOptions),
 				textArea = $("<textarea></textarea>").css(textareaPanelOptions), selStart=0, selEnd=0;
+		if(options.savedText != ""){
+			editableDiv.html(options.savedText);
+			textArea.val(options.savedText);
+		}
 		self.click(function(e) {
-			if(editableDiv.is(":visible")){
+			if(editableDiv.is(":visible")){ 
 				var myDiv = editableDiv.get(0);
 				myDiv.focus();
 				if (window.getSelection && document.createRange) {
@@ -194,8 +162,8 @@
 			}
 		});
 		
-		self.append(panel);
-		self.prepend(editableDiv);
+		self.prepend(panel);
+		self.append(editableDiv);
 		self.append(textArea);
 		textArea.hide();
 		textArea.select(function(e) {
@@ -203,14 +171,16 @@
 			selEnd=textArea[0].selectionEnd;
 		});
 
-		panel.hide();
-		self.hover(
-			function() {
-				panel.fadeIn();
-			}, 
-			function() {
-				panel.fadeOut();
-			});
+		if(options.hidePanel){
+			panel.hide();
+			self.hover(
+				function() {
+					panel.fadeIn();
+				}, 
+				function() {
+					panel.fadeOut();
+				});
+		}
 		//Control buttons on panel
 		var wrapTo = function(tag, attributes, selection){
 			if(editableDiv.is(":visible")){
@@ -301,6 +271,14 @@
 			e.preventDefault();
 			wrapTo("center","");
 			e.stopPropagation();
+		});
+		editableDiv.keypress(function( event ) {
+			textArea.val(editableDiv.html());
+			options.savedText = textArea.val();
+		});
+		textArea.keypress(function( event ) {
+			editableDiv.html(textArea.val());
+			options.savedText = textArea.val();
 		});
 		panel.find("#htmlTextBoxText").click(function(e){
 			e.preventDefault();
@@ -612,6 +590,9 @@
 		panel.find("#header").change(function(e) {
 			wrapTo("h"+$(this).val().replace(/\D+/g,''),"");
 		});
-
+		
+		panel.find("#header").click(function(e) {
+			e.stopPropagation();
+		});
     }
 })(jQuery)

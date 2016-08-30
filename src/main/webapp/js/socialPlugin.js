@@ -26,9 +26,10 @@
 						{
 							data:{name: "Параметры",
 							click: function(){
-								options.popup.find('form').find('input[name="width"]').val(self.css('width'));
+								options.popup.find('form').find('input[name="width"]').val(self.get(0).style.width);
 								options.popup.find('form').find('input[name="height"]').val(self.css('height'));
 								options.popup.find('form').find('input[type="button"]').css('background',self.css('background'));
+								options.popup.find('form').find('textarea[name="classes"]').text(self.attr('class'));
 								options.popup.dialog( "open" );
 								options.parentElement.hide();
 							}}

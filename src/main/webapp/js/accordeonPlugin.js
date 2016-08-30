@@ -1,66 +1,14 @@
 (function( $ ){
-    $.fn.videoPlugin = function(options){
+    $.fn.accordeonPlugin = function(options){
 		var isURL = function (url) {
 			var strRegex = "^s?https?:\/\/[-_.!~*'()a-zA-Z0-9;\/?:\@&=+\$,%#]+$";
 			 var re=new RegExp(strRegex);
 			 return re.test(url);
 		 },
 		defaultOptions = {
-			restUrl: "/videoblocks",
-			videoUrl: "",
-			appendVideo: function(videoLink){
-				var errorMessage = "";
-				if(videoLink != ""){
-					//Разбор линка и вставка iframe
-					if(isURL(videoLink)){
-						var embedCode = "";
-						if((videoLink.includes("youtube.com") 
-								|| videoLink.includes("youtu.be"))
-								&& videoLink.includes("watch?v=")){
-							embedCode = videoLink.substring(videoLink.indexOf("=")+1,videoLink.indexOf("=")+12);
-						}
-						//Another link https://youtu.be/SxbZiQ760Xk
-						if(videoLink.includes("youtu.be")){
-							embedCode = videoLink.substring(videoLink.lastIndexOf("/")+1,videoLink.length);
-
-						}
-						if(videoLink.includes("embed")){
-							embedCode = videoLink.substring(videoLink.lastIndexOf("/")+1,videoLink.length);
-
-						}
-						if(embedCode != ""){
-							self.children('input').remove();
-							self.children('iframe').remove();
-							//width="'+width+'" height="'+height+'"
-							var videoframe = $('<iframe  src="http://www.youtube.com/embed/'+embedCode+'" frameborder="0"></iframe>');
-							self.append(videoframe);
-							videoframe.attr("src", videoframe.attr("src"));
-						} else {
-							errorMessage = "<center>"+videoLink + "не является ссылкой на видео youtube!</center><br>"
-						}
-					} else {
-						errorMessage = "<center>"+videoLink + "вообще не является ссылкой!</center>";
-
-					}
-					if(errorMessage != ""){ var alertMessage = $(errorMessage).dialog({
-							autoOpen: false,
-							width: "200px",
-							buttons: [
-								{
-									text: "Ok",
-									click: function() {
-										$(this).dialog("close");
-									}
-								}
-							]
-						});
-						alertMessage.dialog("open");
-					}
-				} 
-			},
+			restUrl: "/accordeonblocks/",
 			thisBlock : $(this),
 			resizable : true,
-			//popupWidth: 600,
 			parentElement:$('<ul style="width:100px;position: absolute;"></ul>'),
             popup: $("<div id='"+options.thisBlock.attr('id')+"Popup' title='Параметры'></div>"),
 			colors: $('#simpleColors'),
@@ -75,7 +23,53 @@
 								options.parentElement.hide();
 							}}
 						},
-						null,
+						{
+							data:{name: "Добавить вкладку",
+							click: function(){
+								/*
+								* <div class="accordeon-text" data-block="text"><h3>НАЗВАНИЕ ВКЛАДКИ(сделать настраиваемой текстовую панель)</h3></div> 
+										   <div class="accordeon-text" data-block="text">ТЕКСТ ВКЛАДКИ</div>
+								*/
+							   var localPopup = $("#accordeonItemAddForm").clone().removeClass("hidden");
+							   //Values for select
+								self.children('div').each(function(k,v){
+									if((k+1)% 2 != 0){
+										var newOption = $('<option>'+$(v).attr("id")+'-'+$(v).find('div[contenteditable="true"]').text().substring(0,25)+"..."+'</option>')
+															.attr('value',$(v).attr("id"));
+										localPopup.find('select[name="push"]').append(newOption);
+									}
+								});
+							   $("<div id='"+self.attr("id")+"AddItem' title='Добавить вкладку'></div>").append(localPopup).dialog({
+									autoOpen: true,
+									width: options.popupWidth+"px",
+									buttons: [
+										{
+											text: "Ok",
+											click: function() {
+												var header = $( this ).find('form').find("input[name='name']").val(),
+													push = $( this ).find('form').find('select[name="push"]').prop('selectedIndex'),
+													selectedId = $($( this ).find('form').find('select[name="push"]').children()[push]).attr("value");
+												var newHeaderBlock = $("<div></div>").attr("type","TextBlock"),
+													newDescriptionBlock = $("<div></div>").attr("type","TextBlock"); 
+												options.pasteElement(newHeaderBlock, self, {options:{pushAfter:selectedId == "none" ? null : $("#"+selectedId).next(), savedText: "<h3>"+header+"</h3>", dependBlock: newDescriptionBlock}});
+												options.pasteElement(newDescriptionBlock, self, {options:{pushAfter:newHeaderBlock, savedText: "Содержание вкладки", dependBlock: newHeaderBlock}});
+//												
+												$( this ).dialog( "close" );
+												$( this ).remove();
+											}
+										},
+										{
+											text: "Отмена",
+											click: function() {
+												$( this ).dialog( "close" );
+												$( this ).remove();
+											}
+										}
+									]
+							   });
+								options.parentElement.hide();
+							}}
+						},
 						{
 							data:{name: "Копировать",
 							click: function(){
@@ -88,7 +82,6 @@
 							}}
 						},
 						null
-
 					],
 					
 					popupOptions : {
@@ -122,11 +115,6 @@
 									if(stick === 'right') self.addClass('align_right').css('left','0px');
 									if(stick === 'center') self.addClass('align_center');
 
-									//And video
-									
-									var videoLink = options.popup.find("#youtubeLink").val();
-									options.appendVideo(videoLink);
-
 									$( this ).dialog( "close" );
 								}
 							},
@@ -142,6 +130,7 @@
 		options = $.extend(defaultOptions, options);
 		var self = $(this), inside=false;
 		options = self.blockPlugin(options);
-		if(options.videoUrl != "") options.appendVideo(options.videoUrl);
+		
+		
     }
 })(jQuery)
