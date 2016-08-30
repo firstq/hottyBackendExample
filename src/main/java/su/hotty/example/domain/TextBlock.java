@@ -1,65 +1,40 @@
 package su.hotty.example.domain;
 
-import javax.validation.constraints.NotNull;
-import javax.validation.constraints.Size;
-import java.util.ArrayList;
 import java.util.List;
-import javax.persistence.CascadeType;
 import javax.persistence.EntityManager;
-import javax.persistence.OneToMany;
 import javax.persistence.PersistenceContext;
 import org.springframework.beans.factory.annotation.Configurable;
 import org.springframework.transaction.annotation.Transactional;
-import javax.persistence.Column;
 import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
+import flexjson.JSONDeserializer;
+import flexjson.JSONSerializer;
+import java.util.ArrayList;
+import java.util.Collection;
+import javax.persistence.CascadeType;
+import javax.persistence.OneToMany;
 import javax.persistence.PrimaryKeyJoinColumn;
-import javax.persistence.Version;
+import javax.validation.constraints.Size;
 import org.apache.commons.lang3.builder.ReflectionToStringBuilder;
 import org.apache.commons.lang3.builder.ToStringStyle;
 
 @Entity
 @Configurable
 @PrimaryKeyJoinColumn(name="id")
-public class TextBlock extends Block{
-//
-//    @Id
-//    @GeneratedValue(strategy = GenerationType.AUTO)
-//    @Column(name = "id")
-//    private Long id;
-//    
-//    @Version
-//    @Column(name = "version")
-//    private Integer version;
-//    
-//    public Long getId() {
-//        return this.id;
-//    }
-//    
-//    public void setId(Long id) {
-//        this.id = id;
-//    }
-//    
-//    public Integer getVersion() {
-//        return this.version;
-//    }
-//    
-//    public void setVersion(Integer version) {
-//        this.version = version;
-//    }
-    
+public class TextBlock extends Block {
+
     /**
      */
     @Size(max = 2000)
     private String styles;
+	
+	@Size(max = 10000)
+	private String text;
 
     /**
-     
+     */
     @OneToMany(cascade = CascadeType.ALL)
     private List<Block> blocks = new ArrayList<Block>();
-	*/
+	
     public String getStyles() {
         return this.styles;
     }
@@ -68,24 +43,26 @@ public class TextBlock extends Block{
         this.styles = styles;
     }
     
-//    public List<Block> getBlocks() {
-//        return this.blocks;
-//    }
-//    
-//    public void setBlocks(List<Block> blocks) {
-//        this.blocks = blocks;
-//    }
+	public String getText() {
+		return text;
+	}
+
+	public void setText(String text) {
+		this.text = text;
+	}
+	
+    public List<Block> getBlocks() {
+        return this.blocks;
+    }
+    
+    public void setBlocks(List<Block> blocks) {
+        this.blocks = blocks;
+    }
     
     @PersistenceContext
     transient EntityManager entityManager;
     
     public static final List<String> fieldNames4OrderClauseFilter = java.util.Arrays.asList("styles", "blocks");
-    
-//    public static final EntityManager entityManager() {
-//        EntityManager em = new TextBlock().entityManager;
-//        if (em == null) throw new IllegalStateException("Entity manager has not been injected (is the Spring Aspects JAR configured as an AJC/AJDT aspects library?)");
-//        return em;
-//    }
     
     public static long countTextBlocks() {
         return entityManager().createQuery("SELECT COUNT(o) FROM TextBlock o", Long.class).getSingleResult();
@@ -161,6 +138,36 @@ public class TextBlock extends Block{
         TextBlock merged = this.entityManager.merge(this);
         this.entityManager.flush();
         return merged;
+    }
+    
+    public String toJson() {
+        return new JSONSerializer()
+        .exclude("*.class").serialize(this);
+    }
+    
+    public String toJson(String[] fields) {
+        return new JSONSerializer()
+        .include(fields).exclude("*.class").serialize(this);
+    }
+    
+    public static TextBlock fromJsonToTextBlock(String json) {
+        return new JSONDeserializer<TextBlock>()
+        .use(null, TextBlock.class).deserialize(json);
+    }
+    
+    public static String toTextBlockJsonArray(Collection<TextBlock> collection) {
+        return new JSONSerializer()
+        .exclude("*.class").serialize(collection);
+    }
+    
+    public static String toTextBlockJsonArray(Collection<TextBlock> collection, String[] fields) {
+        return new JSONSerializer()
+        .include(fields).exclude("*.class").serialize(collection);
+    }
+    
+    public static Collection<TextBlock> fromJsonArrayToTextBlocks(String json) {
+        return new JSONDeserializer<List<TextBlock>>()
+        .use("values", TextBlock.class).deserialize(json);
     }
     
     public String toString() {

@@ -1,23 +1,20 @@
 package su.hotty.example.domain;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
-import java.util.ArrayList;
-import org.springframework.beans.factory.annotation.Configurable;
 import java.util.List;
-import javax.persistence.CascadeType;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
+import org.springframework.beans.factory.annotation.Configurable;
 import org.springframework.transaction.annotation.Transactional;
-import javax.persistence.Column;
 import javax.persistence.Entity;
-import javax.persistence.FetchType;
+import flexjson.JSONDeserializer;
+import flexjson.JSONSerializer;
+import java.util.Collection;
+import javax.persistence.Column;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
-import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
-import javax.persistence.OneToMany;
-import javax.persistence.PersistenceContextType;
+import javax.persistence.Transient;
 import javax.persistence.Version;
 import javax.validation.constraints.NotNull;
 import org.apache.commons.lang3.builder.ReflectionToStringBuilder;
@@ -25,12 +22,20 @@ import org.apache.commons.lang3.builder.ToStringStyle;
 
 @Entity
 @Configurable
-@PersistenceContext(type = PersistenceContextType.EXTENDED)
 public class MenuItem {
 
 	public MenuItem() {
 	}
 
+	public MenuItem(String name, Boolean toplevel, String link, int priority, MenuItem parentItem, MenuBlock parentBlock) {
+		this.name = name;
+		this.toplevel = toplevel;
+		this.link = link;
+		this.priority = priority;
+		this.parentItem = parentItem;
+		this.parentBlock = parentBlock;
+	}
+	
 	public MenuItem(Integer version, String name, Boolean toplevel, String link, int priority, MenuItem parentItem, MenuBlock parentBlock) {
 		this.version = version;
 		this.name = name;
@@ -40,7 +45,7 @@ public class MenuItem {
 		this.parentItem = parentItem;
 		this.parentBlock = parentBlock;
 	}
-
+	
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
     @Column(name = "id")
@@ -76,8 +81,19 @@ public class MenuItem {
     private Boolean toplevel;
 
     /**
+	 * Try write to Db value LIKE #<number>
      */
     private String link;
+	
+	private Long dependSliderBlock;
+
+	public Long getDependSliderBlock() {
+		return dependSliderBlock;
+	}
+
+	public void setDependSliderBlock(Long dependSliderBlock) {
+		this.dependSliderBlock = dependSliderBlock;
+	}
 
     /**
      */
@@ -86,15 +102,25 @@ public class MenuItem {
     /**
      */
     @ManyToOne
-	@JoinColumn(name= "parent_item")
     private MenuItem parentItem;
 
     /**
      */
-	@JsonIgnore
-    @ManyToOne(fetch = FetchType.LAZY)
-	@JoinColumn(name= "parent_block")
-    private MenuBlock parentBlock = null;
+    @ManyToOne
+    private MenuBlock parentBlock;
+	
+	
+	@Transient
+	private Boolean isDelete;
+
+	public Boolean getIsDelete() {
+		return isDelete;
+	}
+
+	public void setIsDelete(Boolean isDelete) {
+		this.isDelete = isDelete;
+	}
+	
 	
     public String getName() {
         return this.name;
@@ -129,7 +155,6 @@ public class MenuItem {
     }
     
     public MenuItem getParentItem() {
-		if(parentItem != null) parentItem.setParentItem(null);
         return this.parentItem;
     }
     
@@ -137,7 +162,6 @@ public class MenuItem {
         this.parentItem = parentItem;
     }
     
-	@JsonIgnore(value = true)
     public MenuBlock getParentBlock() {
         return this.parentBlock;
     }
@@ -163,10 +187,6 @@ public class MenuItem {
     
     public static List<MenuItem> findAllMenuItems() {
         return entityManager().createQuery("SELECT o FROM MenuItem o", MenuItem.class).getResultList();
-    }
-	
-	public static List<MenuItem> findAllMenuItemsByParentBlockId(Long menuId) {
-        return entityManager().createQuery("SELECT o FROM MenuItem o WHERE o.parentBlock.id=?", MenuItem.class).setParameter(1, menuId).getResultList();
     }
     
     public static List<MenuItem> findAllMenuItems(String sortFieldName, String sortOrder) {
@@ -235,6 +255,46 @@ public class MenuItem {
         MenuItem merged = this.entityManager.merge(this);
         this.entityManager.flush();
         return merged;
+    }
+    
+	public static List<MenuItem> findMenuItemsByParent(MenuItem parent) {
+        return entityManager().createQuery("SELECT m FROM MenuItem m WHERE m.parentItem = :par ORDER BY priority DESC", MenuItem.class)
+				.setParameter("par", parent)
+				.getResultList();
+    }
+	
+	public static List<MenuItem> findAllMenuItemsByParentBlockId(Long menuId) {
+        return entityManager().createQuery("SELECT o FROM MenuItem o WHERE o.parentBlock.id=?", MenuItem.class).setParameter(1, menuId).getResultList();
+    }
+	
+    public String toJson() {
+        return new JSONSerializer()
+        .exclude("*.class").serialize(this);
+    }
+    
+    public String toJson(String[] fields) {
+        return new JSONSerializer()
+        .include(fields).exclude("*.class").serialize(this);
+    }
+    
+    public static MenuItem fromJsonToMenuItem(String json) {
+        return new JSONDeserializer<MenuItem>()
+        .use(null, MenuItem.class).deserialize(json);
+    }
+    
+    public static String toJsonArray(Collection<MenuItem> collection) {
+        return new JSONSerializer()
+        .exclude("*.class").serialize(collection);
+    }
+    
+    public static String toJsonArray(Collection<MenuItem> collection, String[] fields) {
+        return new JSONSerializer()
+        .include(fields).exclude("*.class").serialize(collection);
+    }
+    
+    public static Collection<MenuItem> fromJsonArrayToMenuItems(String json) {
+        return new JSONDeserializer<List<MenuItem>>()
+        .use("values", MenuItem.class).deserialize(json);
     }
     
     public String toString() {

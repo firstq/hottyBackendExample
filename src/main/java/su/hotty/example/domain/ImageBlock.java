@@ -1,17 +1,15 @@
 package su.hotty.example.domain;
 
-import org.springframework.beans.factory.annotation.Configurable;
 import java.util.List;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
+import org.springframework.beans.factory.annotation.Configurable;
 import org.springframework.transaction.annotation.Transactional;
-import javax.persistence.Column;
 import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
+import flexjson.JSONDeserializer;
+import flexjson.JSONSerializer;
+import java.util.Collection;
 import javax.persistence.PrimaryKeyJoinColumn;
-import javax.persistence.Version;
 import org.apache.commons.lang3.builder.ReflectionToStringBuilder;
 import org.apache.commons.lang3.builder.ToStringStyle;
 
@@ -19,32 +17,7 @@ import org.apache.commons.lang3.builder.ToStringStyle;
 @Configurable
 @PrimaryKeyJoinColumn(name="id")
 public class ImageBlock extends Block{
-//
-//    @Id
-//    @GeneratedValue(strategy = GenerationType.AUTO)
-//    @Column(name = "id")
-//    private Long id;
-//    
-//    @Version
-//    @Column(name = "version")
-//    private Integer version;
-//    
-//    public Long getId() {
-//        return this.id;
-//    }
-//    
-//    public void setId(Long id) {
-//        this.id = id;
-//    }
-//    
-//    public Integer getVersion() {
-//        return this.version;
-//    }
-//    
-//    public void setVersion(Integer version) {
-//        this.version = version;
-//    }
-//    
+
     /**
      */
     private Boolean isClickable;
@@ -85,12 +58,6 @@ public class ImageBlock extends Block{
     transient EntityManager entityManager;
     
     public static final List<String> fieldNames4OrderClauseFilter = java.util.Arrays.asList("isClickable", "description", "originalImgPath");
-    
-//    public static final EntityManager entityManager() {
-//        EntityManager em = new ImageBlock().entityManager;
-//        if (em == null) throw new IllegalStateException("Entity manager has not been injected (is the Spring Aspects JAR configured as an AJC/AJDT aspects library?)");
-//        return em;
-//    }
     
     public static long countImageBlocks() {
         return entityManager().createQuery("SELECT COUNT(o) FROM ImageBlock o", Long.class).getSingleResult();
@@ -168,6 +135,37 @@ public class ImageBlock extends Block{
         return merged;
     }
     
+    public String toJson() {
+        return new JSONSerializer()
+        .exclude("*.class").serialize(this);
+    }
+    
+    public String toJson(String[] fields) {
+        return new JSONSerializer()
+        .include(fields).exclude("*.class").serialize(this);
+    }
+    
+    public static ImageBlock fromJsonToImageBlock(String json) {
+        return new JSONDeserializer<ImageBlock>()
+        .use(null, ImageBlock.class).deserialize(json);
+    }
+    
+    public static String toImageBlockJsonArray(Collection<ImageBlock> collection) {
+        return new JSONSerializer()
+        .exclude("*.class").serialize(collection);
+    }
+    
+    public static String toImageBlockJsonArray(Collection<ImageBlock> collection, String[] fields) {
+        return new JSONSerializer()
+        .include(fields).exclude("*.class").serialize(collection);
+    }
+    
+    public static Collection<ImageBlock> fromJsonArrayToImageBlocks(String json) {
+        return new JSONDeserializer<List<ImageBlock>>()
+        .use("values", ImageBlock.class).deserialize(json);
+    }
+    
+	@Override
     public String toString() {
         return ReflectionToStringBuilder.toString(this, ToStringStyle.SHORT_PREFIX_STYLE);
     }

@@ -1,55 +1,23 @@
 package su.hotty.example.domain;
 
-import javax.validation.constraints.NotNull;
-import javax.validation.constraints.Size;
-import java.util.ArrayList;
 import java.util.List;
-import javax.persistence.CascadeType;
 import javax.persistence.EntityManager;
-import javax.persistence.OneToMany;
 import javax.persistence.PersistenceContext;
 import org.springframework.beans.factory.annotation.Configurable;
 import org.springframework.transaction.annotation.Transactional;
-import javax.persistence.Column;
 import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
+import flexjson.JSONDeserializer;
+import flexjson.JSONSerializer;
+import java.util.Collection;
 import javax.persistence.PrimaryKeyJoinColumn;
-import javax.persistence.Version;
 import org.apache.commons.lang3.builder.ReflectionToStringBuilder;
 import org.apache.commons.lang3.builder.ToStringStyle;
 
 @Entity
 @Configurable
 @PrimaryKeyJoinColumn(name="id")
-public class VideoBlock extends Block{
-//
-//    @Id
-//    @GeneratedValue(strategy = GenerationType.AUTO)
-//    @Column(name = "id")
-//    private Long id;
-//    
-//    @Version
-//    @Column(name = "version")
-//    private Integer version;
-//    
-//    public Long getId() {
-//        return this.id;
-//    }
-//    
-//    public void setId(Long id) {
-//        this.id = id;
-//    }
-//    
-//    public Integer getVersion() {
-//        return this.version;
-//    }
-//    
-//    public void setVersion(Integer version) {
-//        this.version = version;
-//    }
-    
+public class VideoBlock extends Block {
+
     /**
      */
     private String videoUrl;
@@ -78,12 +46,6 @@ public class VideoBlock extends Block{
     transient EntityManager entityManager;
     
     public static final List<String> fieldNames4OrderClauseFilter = java.util.Arrays.asList("videoUrl", "videoSource");
-    
-//    public static final EntityManager entityManager() {
-//        EntityManager em = new VideoBlock().entityManager;
-//        if (em == null) throw new IllegalStateException("Entity manager has not been injected (is the Spring Aspects JAR configured as an AJC/AJDT aspects library?)");
-//        return em;
-//    }
     
     public static long countVideoBlocks() {
         return entityManager().createQuery("SELECT COUNT(o) FROM VideoBlock o", Long.class).getSingleResult();
@@ -159,6 +121,36 @@ public class VideoBlock extends Block{
         VideoBlock merged = this.entityManager.merge(this);
         this.entityManager.flush();
         return merged;
+    }
+    
+    public String toJson() {
+        return new JSONSerializer()
+        .exclude("*.class").serialize(this);
+    }
+    
+    public String toJson(String[] fields) {
+        return new JSONSerializer()
+        .include(fields).exclude("*.class").serialize(this);
+    }
+    
+    public static VideoBlock fromJsonToVideoBlock(String json) {
+        return new JSONDeserializer<VideoBlock>()
+        .use(null, VideoBlock.class).deserialize(json);
+    }
+    
+    public static String toVideoBlockJsonArray(Collection<VideoBlock> collection) {
+        return new JSONSerializer()
+        .exclude("*.class").serialize(collection);
+    }
+    
+    public static String toVideoBlockJsonArray(Collection<VideoBlock> collection, String[] fields) {
+        return new JSONSerializer()
+        .include(fields).exclude("*.class").serialize(collection);
+    }
+    
+    public static Collection<VideoBlock> fromJsonArrayToVideoBlocks(String json) {
+        return new JSONDeserializer<List<VideoBlock>>()
+        .use("values", VideoBlock.class).deserialize(json);
     }
     
     public String toString() {

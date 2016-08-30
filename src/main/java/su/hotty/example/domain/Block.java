@@ -2,28 +2,47 @@ package su.hotty.example.domain;
 
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
-import javax.persistence.ManyToOne;
-import org.springframework.beans.factory.annotation.Configurable;
-import org.springframework.transaction.annotation.Transactional;import java.util.List;
+import java.util.List;
 import javax.persistence.EntityManager;
-import javax.persistence.PersistenceContext;import javax.persistence.Column;
+import javax.persistence.PersistenceContext;
+import org.springframework.beans.factory.annotation.Configurable;
+import org.springframework.transaction.annotation.Transactional;
+import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.Version;
+import flexjson.JSONDeserializer;
+import flexjson.JSONSerializer;
+import java.util.ArrayList;
+import java.util.Collection;
+import javax.persistence.CascadeType;
+import javax.persistence.FetchType;
 import javax.persistence.Inheritance;
 import javax.persistence.InheritanceType;
+import javax.persistence.ManyToOne;
+import javax.persistence.OneToMany;
 import javax.persistence.Transient;
-import javax.persistence.Version;
 import org.apache.commons.lang3.builder.ReflectionToStringBuilder;
 import org.apache.commons.lang3.builder.ToStringStyle;
-import org.hibernate.annotations.Subselect;
 
 @Entity
 @Configurable
 @Inheritance(strategy=InheritanceType.JOINED)
 public class Block {
 
+	public Block() {
+	}
+
+	public Block(String name, String styles, Block parent, Boolean topLevel, Page page) {
+		this.name = name;
+		this.styles = styles;
+		this.parent = parent;
+		this.topLevel = topLevel;
+		this.page = page;
+	}
+	
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
     @Column(name = "id")
@@ -49,6 +68,18 @@ public class Block {
         this.version = version;
     }
     
+	
+	@Transient
+	private Boolean isDelete;
+
+	public Boolean getIsDelete() {
+		return isDelete;
+	}
+
+	public void setIsDelete(Boolean isDelete) {
+		this.isDelete = isDelete;
+	}
+	
     /**
      */
     @NotNull
@@ -77,6 +108,26 @@ public class Block {
      */
     @ManyToOne
     private StaticBlock staticBlock;
+
+    /**
+     */
+//    @OneToMany(cascade = CascadeType.ALL, fetch = FetchType.EAGER)
+//    private List<FrontClass> frontClases = new ArrayList<FrontClass>();
+	
+	private String frontClases;
+	
+	/**
+     */
+    @OneToMany(cascade = CascadeType.ALL)
+    private List<Block> children = new ArrayList<Block>();
+	
+	public List<Block> getChildren() {
+		return children;
+	}
+
+	public void setChildren(List<Block> children) {
+		this.children = children;
+	}
 	
     public String getName() {
         return this.name;
@@ -126,10 +177,18 @@ public class Block {
         this.staticBlock = staticBlock;
     }
     
+    public String getFrontClases() {
+        return this.frontClases;
+    }
+    
+    public void setFrontClases(String frontClases) {
+        this.frontClases = frontClases;
+    }
+    
     @PersistenceContext
     transient EntityManager entityManager;
     
-    public static final List<String> fieldNames4OrderClauseFilter = java.util.Arrays.asList("name", "styles", "parent", "topLevel", "page", "staticBlock");
+    public static final List<String> fieldNames4OrderClauseFilter = java.util.Arrays.asList("name", "styles", "parent", "topLevel", "page", "staticBlock", "frontClases");
     
     public static final EntityManager entityManager() {
         EntityManager em = new Block().entityManager;
@@ -142,10 +201,6 @@ public class Block {
     }
     
     public static List<Block> findAllBlocks() {
-        return entityManager().createQuery("SELECT o FROM Block o", Block.class).getResultList();
-    }
-	
-	public static List<Block> findAllBlocksAndChildren() {
         return entityManager().createQuery("SELECT o FROM Block o", Block.class).getResultList();
     }
     
@@ -217,11 +272,38 @@ public class Block {
         return merged;
     }
     
-    public String toString() {
-        return ReflectionToStringBuilder.toString(this, ToStringStyle.SHORT_PREFIX_STYLE);
+    public String toJson() {
+        return new JSONSerializer()
+        .exclude("*.class").serialize(this);
     }
-     @Transient
-	 private String blockType = this.getClass().toString();
+    
+    public String toJson(String[] fields) {
+        return new JSONSerializer()
+        .include(fields).exclude("*.class").serialize(this);
+    }
+    
+    public static Block fromJsonToBlock(String json) {
+        return new JSONDeserializer<Block>()
+        .use(null, Block.class).deserialize(json);
+    }
+    
+    public static String toJsonArray(Collection<Block> collection) {
+        return new JSONSerializer()
+        .exclude("*.class").serialize(collection);
+    }
+    
+    public static String toJsonArray(Collection<Block> collection, String[] fields) {
+        return new JSONSerializer()
+        .include(fields).exclude("*.class").serialize(collection);
+    }
+    
+    public static Collection<Block> fromJsonArrayToBlocks(String json) {
+        return new JSONDeserializer<List<Block>>()
+        .use("values", Block.class).deserialize(json);
+    }
+	
+    @Transient
+	 private String blockType = this.getClass().toString().substring(this.getClass().toString().lastIndexOf(".")+1);
 
 	public String getBlockType() {
 		return blockType;
@@ -230,5 +312,9 @@ public class Block {
 	public void setBlockType(String blockType) {
 		this.blockType = blockType;
 	}
-	 
+	
+    public String toString() {
+        return ReflectionToStringBuilder.toString(this, ToStringStyle.SHORT_PREFIX_STYLE);
+    }
+    
 }

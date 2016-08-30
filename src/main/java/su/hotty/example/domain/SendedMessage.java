@@ -1,10 +1,16 @@
 package su.hotty.example.domain;
 
 import javax.validation.constraints.NotNull;
+import javax.validation.constraints.Size;
+import javax.validation.constraints.Pattern;
+import java.util.Calendar;
 import java.util.List;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
+import javax.persistence.Temporal;
+import javax.persistence.TemporalType;
 import org.springframework.beans.factory.annotation.Configurable;
+import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.transaction.annotation.Transactional;
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -21,15 +27,7 @@ import org.apache.commons.lang3.builder.ToStringStyle;
 
 @Entity
 @Configurable
-public class FrontClass {
-
-	public FrontClass() {
-	}
-
-	public FrontClass(String name, Page page) {
-		this.name = name;
-		this.page = page;
-	}
+public class SendedMessage {
 	
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
@@ -40,6 +38,29 @@ public class FrontClass {
     @Column(name = "version")
     private Integer version;
     
+    @NotNull
+    @Size(min = 1)
+    private String theme;
+	
+	@NotNull
+    @Size(min = 1)
+    private String captcha;
+	
+	@Size(max = 2000)
+    private String targetMessage;
+
+    @NotNull
+    @Pattern(regexp = "[\\w.]+@[\\w.]+\\.\\w+")
+    private String email;
+
+    @ManyToOne
+    private SendmailBlock parent;
+
+	@Column(columnDefinition = "TIMESTAMP DEFAULT CURRENT_TIMESTAMP")
+    @Temporal(TemporalType.TIMESTAMP)
+    @DateTimeFormat(pattern = "dd.MM.yyyy hh:mm:ss a")
+    private Calendar dateCreate;
+	
     public Long getId() {
         return this.id;
     }
@@ -47,6 +68,38 @@ public class FrontClass {
     public void setId(Long id) {
         this.id = id;
     }
+
+	public String getCaptcha() {
+		return captcha;
+	}
+
+	public void setCaptcha(String captcha) {
+		this.captcha = captcha;
+	}
+
+	public String getTheme() {
+		return theme;
+	}
+
+	public void setTheme(String theme) {
+		this.theme = theme;
+	}
+
+	public String getTargetMessage() {
+		return targetMessage;
+	}
+
+	public void setTargetMessage(String targetMessage) {
+		this.targetMessage = targetMessage;
+	}
+
+	public SendmailBlock getParent() {
+		return parent;
+	}
+
+	public void setParent(SendmailBlock parent) {
+		this.parent = parent;
+	}
     
     public Integer getVersion() {
         return this.version;
@@ -56,80 +109,70 @@ public class FrontClass {
         this.version = version;
     }
     
-    /**
-     */
-    @NotNull
-    private String name;
-	
-	/**
-     */
-    @ManyToOne
-    private Page page;
-
-	public Page getPage() {
-		return page;
-	}
-
-	public void setPage(Page page) {
-		this.page = page;
-	}
-	
-    public String getName() {
-        return this.name;
+    public String getEmail() {
+        return this.email;
     }
     
-    public void setName(String name) {
-        this.name = name;
+    public void setEmail(String email) {
+        this.email = email;
+    }
+    
+    public Calendar getDateCreate() {
+        return this.dateCreate;
+    }
+    
+    public void setDateCreate(Calendar dateCreate) {
+        this.dateCreate = dateCreate;
     }
     
     @PersistenceContext
     transient EntityManager entityManager;
     
-    public static final List<String> fieldNames4OrderClauseFilter = java.util.Arrays.asList("name");
+    public static final List<String> fieldNames4OrderClauseFilter = java.util.Arrays.asList("name", "lastname", "fathername", "email", "login", "password", "dateCreate", "dateUpdate", "dateLastVisit", "enabled");
     
     public static final EntityManager entityManager() {
-        EntityManager em = new FrontClass().entityManager;
+        EntityManager em = new SendedMessage().entityManager;
         if (em == null) throw new IllegalStateException("Entity manager has not been injected (is the Spring Aspects JAR configured as an AJC/AJDT aspects library?)");
         return em;
     }
     
-    public static long countFrontClasses() {
-        return entityManager().createQuery("SELECT COUNT(o) FROM FrontClass o", Long.class).getSingleResult();
+    public static long countSendedMessages() {
+        return entityManager().createQuery("SELECT COUNT(o) FROM SendedMessage o", Long.class).getSingleResult();
     }
     
-    public static List<FrontClass> findAllFrontClasses() {
-        return entityManager().createQuery("SELECT o FROM FrontClass o", FrontClass.class).getResultList();
+    public static List<SendedMessage> findAllSendedMessages() {
+        return entityManager().createQuery("SELECT o FROM SendedMessage o", SendedMessage.class).getResultList();
     }
     
-    public static List<FrontClass> findAllFrontClasses(String sortFieldName, String sortOrder) {
-        String jpaQuery = "SELECT o FROM FrontClass o";
+    public static List<SendedMessage> findAllSendedMessages(String sortFieldName, String sortOrder) {
+        String jpaQuery = "SELECT o FROM SendedMessage o";
         if (fieldNames4OrderClauseFilter.contains(sortFieldName)) {
             jpaQuery = jpaQuery + " ORDER BY " + sortFieldName;
             if ("ASC".equalsIgnoreCase(sortOrder) || "DESC".equalsIgnoreCase(sortOrder)) {
                 jpaQuery = jpaQuery + " " + sortOrder;
             }
         }
-        return entityManager().createQuery(jpaQuery, FrontClass.class).getResultList();
+        return entityManager().createQuery(jpaQuery, SendedMessage.class).getResultList();
     }
     
-    public static FrontClass findFrontClass(Long id) {
+    public static SendedMessage findSendedMessage(Long id) {
         if (id == null) return null;
-        return entityManager().find(FrontClass.class, id);
+        return entityManager().find(SendedMessage.class, id);
     }
     
-    public static List<FrontClass> findFrontClassEntries(int firstResult, int maxResults) {
-        return entityManager().createQuery("SELECT o FROM FrontClass o", FrontClass.class).setFirstResult(firstResult).setMaxResults(maxResults).getResultList();
+    public static List<SendedMessage> findSendedMessageEntries(int firstResult, int maxResults) {
+        return entityManager().createQuery("SELECT o FROM SendedMessage o", SendedMessage.class).setFirstResult(firstResult).setMaxResults(maxResults).getResultList();
     }
     
-    public static List<FrontClass> findFrontClassEntries(int firstResult, int maxResults, String sortFieldName, String sortOrder) {
-        String jpaQuery = "SELECT o FROM FrontClass o";
+    public static List<SendedMessage> findSendedMessageEntries(int firstResult, int maxResults, String sortFieldName, String sortOrder) {
+        String jpaQuery = "SELECT o FROM SendedMessage o";
         if (fieldNames4OrderClauseFilter.contains(sortFieldName)) {
             jpaQuery = jpaQuery + " ORDER BY " + sortFieldName;
             if ("ASC".equalsIgnoreCase(sortOrder) || "DESC".equalsIgnoreCase(sortOrder)) {
                 jpaQuery = jpaQuery + " " + sortOrder;
             }
         }
-        return entityManager().createQuery(jpaQuery, FrontClass.class).setFirstResult(firstResult).setMaxResults(maxResults).getResultList();
+        return entityManager().createQuery(jpaQuery, SendedMessage.class).setFirstResult(firstResult).setMaxResults(maxResults).getResultList();
     }
     
     @Transactional
@@ -144,7 +187,7 @@ public class FrontClass {
         if (this.entityManager.contains(this)) {
             this.entityManager.remove(this);
         } else {
-            FrontClass attached = findFrontClass(this.id);
+            SendedMessage attached = SendedMessage.findSendedMessage(this.id);
             this.entityManager.remove(attached);
         }
     }
@@ -162,9 +205,9 @@ public class FrontClass {
     }
     
     @Transactional
-    public FrontClass merge() {
+    public SendedMessage merge() {
         if (this.entityManager == null) this.entityManager = entityManager();
-        FrontClass merged = this.entityManager.merge(this);
+        SendedMessage merged = this.entityManager.merge(this);
         this.entityManager.flush();
         return merged;
     }
@@ -179,24 +222,24 @@ public class FrontClass {
         .include(fields).exclude("*.class").serialize(this);
     }
     
-    public static FrontClass fromJsonToFrontClass(String json) {
-        return new JSONDeserializer<FrontClass>()
-        .use(null, FrontClass.class).deserialize(json);
+    public static SendedMessage fromJsonToSendedMessage(String json) {
+        return new JSONDeserializer<SendedMessage>()
+        .use(null, SendedMessage.class).deserialize(json);
     }
     
-    public static String toJsonArray(Collection<FrontClass> collection) {
+    public static String toJsonArray(Collection<SendedMessage> collection) {
         return new JSONSerializer()
         .exclude("*.class").serialize(collection);
     }
     
-    public static String toJsonArray(Collection<FrontClass> collection, String[] fields) {
+    public static String toJsonArray(Collection<SendedMessage> collection, String[] fields) {
         return new JSONSerializer()
         .include(fields).exclude("*.class").serialize(collection);
     }
     
-    public static Collection<FrontClass> fromJsonArrayToFrontClasses(String json) {
-        return new JSONDeserializer<List<FrontClass>>()
-        .use("values", FrontClass.class).deserialize(json);
+    public static Collection<SendedMessage> fromJsonArrayToSendedMessages(String json) {
+        return new JSONDeserializer<List<SendedMessage>>()
+        .use("values", SendedMessage.class).deserialize(json);
     }
     
     public String toString() {

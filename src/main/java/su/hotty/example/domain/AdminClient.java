@@ -4,27 +4,29 @@ import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 import javax.validation.constraints.Pattern;
 import java.util.Calendar;
+import java.util.List;
+import javax.persistence.EntityManager;
+import javax.persistence.PersistenceContext;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
 import org.springframework.beans.factory.annotation.Configurable;
 import org.springframework.format.annotation.DateTimeFormat;
-import javax.persistence.EntityManager;
-import javax.persistence.PersistenceContext;
 import org.springframework.transaction.annotation.Transactional;
-import java.util.List;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.Version;
+import flexjson.JSONDeserializer;
+import flexjson.JSONSerializer;
+import java.util.Collection;
 import org.apache.commons.lang3.builder.ReflectionToStringBuilder;
 import org.apache.commons.lang3.builder.ToStringStyle;
 
 @Entity
 @Configurable
 public class AdminClient {
-
 	
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
@@ -84,6 +86,7 @@ public class AdminClient {
 
     /**
      */
+	@Column(columnDefinition = "TIMESTAMP DEFAULT CURRENT_TIMESTAMP")
     @Temporal(TemporalType.TIMESTAMP)
     @DateTimeFormat(pattern = "dd.MM.yyyy hh:mm:ss a")
     private Calendar dateCreate;
@@ -103,7 +106,6 @@ public class AdminClient {
     /**
      */
     private Boolean enabled;
-	
 	
     public String getName() {
         return this.name;
@@ -247,7 +249,7 @@ public class AdminClient {
         if (this.entityManager.contains(this)) {
             this.entityManager.remove(this);
         } else {
-            AdminClient attached = findAdminClient(this.id);
+            AdminClient attached = AdminClient.findAdminClient(this.id);
             this.entityManager.remove(attached);
         }
     }
@@ -270,6 +272,36 @@ public class AdminClient {
         AdminClient merged = this.entityManager.merge(this);
         this.entityManager.flush();
         return merged;
+    }
+    
+    public String toJson() {
+        return new JSONSerializer()
+        .exclude("*.class").serialize(this);
+    }
+    
+    public String toJson(String[] fields) {
+        return new JSONSerializer()
+        .include(fields).exclude("*.class").serialize(this);
+    }
+    
+    public static AdminClient fromJsonToAdminClient(String json) {
+        return new JSONDeserializer<AdminClient>()
+        .use(null, AdminClient.class).deserialize(json);
+    }
+    
+    public static String toJsonArray(Collection<AdminClient> collection) {
+        return new JSONSerializer()
+        .exclude("*.class").serialize(collection);
+    }
+    
+    public static String toJsonArray(Collection<AdminClient> collection, String[] fields) {
+        return new JSONSerializer()
+        .include(fields).exclude("*.class").serialize(collection);
+    }
+    
+    public static Collection<AdminClient> fromJsonArrayToAdminClients(String json) {
+        return new JSONDeserializer<List<AdminClient>>()
+        .use("values", AdminClient.class).deserialize(json);
     }
     
     public String toString() {

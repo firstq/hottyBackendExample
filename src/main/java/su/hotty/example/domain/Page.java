@@ -1,28 +1,32 @@
 package su.hotty.example.domain;
 
-import javax.validation.constraints.NotNull;
-import javax.validation.constraints.Size;
-import java.util.ArrayList;
 import java.util.List;
-import javax.persistence.CascadeType;
 import javax.persistence.EntityManager;
-import javax.persistence.OneToMany;
 import javax.persistence.PersistenceContext;
 import org.springframework.beans.factory.annotation.Configurable;
 import org.springframework.transaction.annotation.Transactional;
-import javax.persistence.Column;
 import javax.persistence.Entity;
+import flexjson.JSONDeserializer;
+import flexjson.JSONSerializer;
+import java.util.ArrayList;
+import java.util.Collection;
+import javax.persistence.CascadeType;
+import javax.persistence.Column;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.ManyToOne;
+import javax.persistence.OneToMany;
 import javax.persistence.Version;
+import javax.validation.constraints.NotNull;
+import javax.validation.constraints.Size;
 import org.apache.commons.lang3.builder.ReflectionToStringBuilder;
 import org.apache.commons.lang3.builder.ToStringStyle;
 
 @Entity
 @Configurable
 public class Page {
-
+	
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
     @Column(name = "id")
@@ -74,8 +78,7 @@ public class Page {
 
     /**
      */
-    @OneToMany(cascade = CascadeType.ALL)
-    private List<FrontClass> frontClases = new ArrayList<FrontClass>();
+    private String frontClases;
 	
     public String getPagePath() {
         return this.pagePath;
@@ -117,11 +120,11 @@ public class Page {
         this.blocks = blocks;
     }
     
-    public List<FrontClass> getFrontClases() {
+    public String getFrontClases() {
         return this.frontClases;
     }
     
-    public void setFrontClases(List<FrontClass> frontClases) {
+    public void setFrontClases(String frontClases) {
         this.frontClases = frontClases;
     }
     
@@ -210,6 +213,39 @@ public class Page {
         Page merged = this.entityManager.merge(this);
         this.entityManager.flush();
         return merged;
+    }
+    
+    public String toJson() {
+        return new JSONSerializer().exclude("*.class").serialize(this);
+    }
+    
+    public String toEagerJson() {
+        return new JSONSerializer().include("blocks").exclude("*.class").deepSerialize(this);
+    }
+    
+    public String toJson(String[] fields) {
+        return new JSONSerializer()
+        .include(fields).exclude("*.class").serialize(this);
+    }
+    
+    public static Page fromJsonToPage(String json) {
+        return new JSONDeserializer<Page>()
+        .use(null, Page.class).deserialize(json);
+    }
+    
+    public static String toJsonArray(Collection<Page> collection) {
+        return new JSONSerializer()
+        .exclude("*.class").serialize(collection);
+    }
+    
+    public static String toJsonArray(Collection<Page> collection, String[] fields) {
+        return new JSONSerializer()
+        .include(fields).exclude("*.class").serialize(collection);
+    }
+    
+    public static Collection<Page> fromJsonArrayToPages(String json) {
+        return new JSONDeserializer<List<Page>>()
+        .use("values", Page.class).deserialize(json);
     }
     
     public String toString() {
