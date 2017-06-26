@@ -1,0 +1,22 @@
+
+<div class="row">
+  <div class="col-md-12">
+    <md-content layout-padding>
+      <div>
+        <form name="userForm">
+          <section layout="row" layout-sm="column" layout-align="end center" layout-wrap layout-wrap ng-hide="currentRequest.isArchive">
+            <md-button class="md-raised md-primary" ng-click="archivate(currentRequest)">
+              В АРХИВ
+            </md-button>
+          </section>
+
+        </form>
+      </div>
+      <h4>{{ createDate(currentRequest.createdAt, true) }}</h4>
+      <h3>{{ currentRequest.name }}</h3>
+      <p><b>Компания: </b> {{ currentRequest.company }} <b>Телефон: </b> {{ currentRequest.phone }} <b>Эл. почта: </b>{{ currentRequest.email }}</p>
+      <p>{{ currentRequest.topic }}</p>
+    </md-content>
+  </div>
+
+</div>

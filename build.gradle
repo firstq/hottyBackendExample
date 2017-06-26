@@ -1,0 +1,129 @@
+buildscript {
+	ext {
+		springBootVersion = '1.4.3.RELEASE'
+	}
+	repositories {
+		mavenCentral()
+		maven {
+			url "https://repository.sonatype.org/content/repositories/sourceforge-releases"
+		}
+			maven {
+			url "http://svn.atlassian.com/svn/public/contrib/repository/maven2"
+		}
+		maven {
+			url "http://repository.atlassian.com/maven2"
+		}
+		maven {
+			// URL can refer to a local directory
+			url "/Users/serera2rikov/.m2/repository"
+		}
+	}
+	dependencies {
+		classpath("org.springframework.boot:spring-boot-gradle-plugin:${springBootVersion}")
+	}
+}
+
+apply plugin: 'java'
+apply plugin: 'eclipse'
+apply plugin: 'idea'
+apply plugin: 'org.springframework.boot'
+
+springBoot {
+	executable = true
+}
+
+jar {
+	baseName = 'hotty'
+	version = '1.0.0'
+}
+
+processResources{
+//	exclude 'static/hotty/node_modules'
+}
+
+sourceCompatibility = 1.8
+targetCompatibility = 1.8
+
+repositories {
+	mavenCentral()
+	maven {
+		url "https://repository.sonatype.org/content/repositories/sourceforge-releases"
+	}
+	maven {
+		url "http://svn.atlassian.com/svn/public/contrib/repository/maven2"
+	}
+	maven {
+		url "http://repository.atlassian.com/maven2"
+	}
+	maven {
+		url "/Users/serera2rikov/.m2/repository"
+	}
+}
+
+dependencies {
+	compile('org.springframework.boot:spring-boot-starter-actuator')
+	compile("org.springframework.boot:spring-boot-starter-data-mongodb:1.2.5.RELEASE")
+	compile('org.springframework.boot:spring-boot-actuator-docs')
+	compile('org.springframework.boot:spring-boot-starter-amqp')
+	compile('org.springframework.boot:spring-boot-starter-aop')
+	compile('org.springframework.boot:spring-boot-starter-cache')
+	compile('org.springframework.boot:spring-boot-starter-data-jpa')
+	compile('org.springframework.boot:spring-boot-devtools')
+	compile('org.springframework.boot:spring-boot-starter-mail')
+	compile('org.springframework.boot:spring-boot-starter-mobile')
+	compile('org.springframework.boot:spring-boot-configuration-processor')
+	compile('org.springframework.boot:spring-boot-starter-security')
+	compile('org.springframework.boot:spring-boot-starter-thymeleaf')
+	compile('org.springframework.boot:spring-boot-starter-web')
+
+    compile('org.springframework.session:spring-session')
+    compile('org.springframework.retry:spring-retry')
+
+	compile group: 'org.flywaydb', name: 'flyway-core', version: '4.0.3'
+
+//    compile group: 'org.liquibase', name: 'liquibase-core', version: '3.5.3'
+
+    compile group: 'com.sun.mail', name: 'javax.mail', version: '1.5.6'
+
+    compile group: 'com.google.guava', name: 'guava', version: '20.0'
+    compile group: 'com.google.code.gson', name: 'gson', version: '2.8.0'
+
+	compile group: 'com.squareup.okhttp3', name: 'okhttp', version: '3.5.0'
+	compile group: 'com.squareup.okhttp3', name: 'okhttp-urlconnection', version: '3.5.0'
+	compile group: 'com.squareup.okhttp3', name: 'logging-interceptor', version: '3.5.0'
+
+	compile group: 'com.squareup.retrofit2', name: 'retrofit', version: '2.1.0'
+	compile group: 'com.squareup.retrofit2', name: 'retrofit-mock', version: '2.1.0'
+	compile group: 'com.squareup.retrofit2', name: 'retrofit-converters', version: '2.1.0'
+
+	compile group: 'com.squareup.retrofit2', name: 'converter-jackson', version: '2.1.0'
+	compile group: 'com.squareup.retrofit2', name: 'converter-gson', version: '2.1.0'
+
+	compile group: 'joda-time', name: 'joda-time', version: '2.9.6'
+
+    compile group: 'org.jsoup', name: 'jsoup', version: '1.10.1'
+
+    compile group: 'org.json', name: 'json', version: '20160810'
+
+	compile group: 'com.intellij', name: 'annotations', version: '12.0'
+
+	compile group: 'commons-io', name: 'commons-io', version: '2.4'
+
+	compile group: 'org.apache.commons', name: 'commons-lang3', version: '3.1'
+
+	compile group: 'net.sf.flexjson', name: 'flexjson', version: '3.3'
+
+	compile group: 'com.drewnoakes', name: 'metadata-extractor', version: '2.8.1'
+
+	compile("org.mongodb:mongo-java-driver:3.3.0")
+
+	compile group: 'com.octo.captcha', name: 'jcaptcha', version: '2.0-alpha-1'
+	compile group: 'com.jhlabs', name: 'filters', version: '2.0.235'
+
+	compile group: 'commons-collections', name: 'commons-collections', version: '3.2.1'
+
+	runtime('org.postgresql:postgresql')
+
+	testCompile('org.springframework.boot:spring-boot-starter-test')
+
+}

@@ -1,0 +1,72 @@
+
+    <md-content layout-padding>
+      <md-list>
+
+        <md-list-item ng-repeat="request in requests" ng-click="showDetails(request)">
+          <p>{{ createDate(request.createdAt, true) }}</p>
+          <p>{{ request.name }}</p>
+          <p>{{ request.company }}</p>
+          <p>{{ request.phone }}</p>
+          <p>{{ request.email }}</p>
+          <section layout="row" layout-sm="column" layout-align="end center" layout-wrap ng-hide="request.isArchive">
+            <md-button class="md-raised md-primary" ng-click="archivate(request)">
+              В АРХИВ
+            </md-button>
+          </section>
+        </md-list-item>
+
+      </md-list>
+
+    <!--
+    <md-list-item ng-click="showDetails()">
+          <div class="md-list-item-text" layout="column">31.12.2016
+            Пушкин Александр Сергеевич
+            МТС
+            79034244321
+            push@kin.com</div>
+          <section layout="row" layout-sm="column" layout-align="end center" layout-wrap>
+          <md-button class="md-raised md-primary" ng-click="archivate()">
+            В АРХИВ
+          </md-button>
+            </section>
+        </md-list-item>
+
+    <div class="table-responsive">
+        <table class="table table-striped">
+          <thead>
+          <tr>
+            <th>Дата</th>
+            <th>ФИО</th>
+            <th>Компания</th>
+            <th>Телефон</th>
+            <th>Эл. почта</th>
+            <th></th>
+          </tr>
+          </thead>
+          <tbody>
+          <tr ng-click="showDetails()">
+            <td>31.12.2016</td>
+            <td>Пушкин Александр Сергеевич</td>
+            <td>МТС</td>
+            <td>79034244321</td>
+            <td>jordan@kin.com</td>
+            <td><md-button class="md-raised md-primary" ng-click="archivate()">
+              В АРХИВ
+            </md-button></td>
+          </tr>
+          <tr ng-click="showDetails()">
+            <td>31.12.2016</td>
+            <td>Jeff Jordan</td>
+            <td>Beeline</td>
+            <td>79034244321</td>
+            <td>jordan@kin.com</td>
+            <td><md-button class="md-raised md-primary" ng-click="archivate()">
+              В АРХИВ
+            </md-button></td>
+          </tr>
+          </tbody>
+        </table>
+        <a id="bottom"></a>
+      </div> -->
+    </md-content>
+

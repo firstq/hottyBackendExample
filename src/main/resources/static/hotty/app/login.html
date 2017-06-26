@@ -1,0 +1,118 @@
+<!DOCTYPE html>
+<!--[if lt IE 7]>
+<html lang="en" ng-app="signIn" class="no-js lt-ie9 lt-ie8 lt-ie7"> <![endif]-->
+<!--[if IE 7]>
+<html lang="en" ng-app="signIn" class="no-js lt-ie9 lt-ie8"> <![endif]-->
+<!--[if IE 8]>
+<html lang="en" ng-app="signIn" class="no-js lt-ie9"> <![endif]-->
+<!--[if gt IE 8]><!-->
+<html lang="en" ng-app="signIn" class="no-js"> <!--<![endif]-->
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <title>Вход в систему | HOTTY.SU</title>
+    <meta name="description" content="">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+
+    <!-- favicon start -->
+    <link rel="apple-touch-icon" sizes="180x180" href="favicon/apple-touch-icon.png">
+    <link rel="icon" type="image/png" href="favicon/favicon-32x32.png" sizes="32x32">
+    <link rel="icon" type="image/png" href="favicon/favicon-16x16.png" sizes="16x16">
+    <link rel="manifest" href="favicon/manifest.json">
+    <link rel="mask-icon" href="favicon/safari-pinned-tab.svg" color="#5bbad5">
+    <meta name="theme-color" content="#ffffff">
+    <!-- favicon end -->
+
+    <link rel="stylesheet" href="bower_components/html5-boilerplate/dist/css/normalize.css">
+    <link rel="stylesheet" href="bower_components/html5-boilerplate/dist/css/main.css">
+    <link rel="stylesheet" href="bower_components/angular-material/angular-material.css">
+    <link rel="stylesheet" href="bower_components/bootstrap/dist/css/bootstrap.min.css">
+    <link rel="stylesheet" href="bower_components/jquery-ui/themes/humanity/jquery-ui.min.css">
+    <link rel="stylesheet" href="bower_components/jquery-ui/themes/humanity/theme.css">
+
+    <link rel="stylesheet" href="app.css">
+
+    <script src="bower_components/jquery/dist/jquery.min.js"></script>
+    <script src="bower_components/jquery-ui/jquery-ui.min.js"></script>
+    <script src="bower_components/html5-boilerplate/dist/js/vendor/modernizr-2.8.3.min.js"></script>
+
+</head>
+<body layout="column">
+
+<md-toolbar layout="row" class="md-toolbar-tools">
+
+</md-toolbar>
+
+<!--[if lt IE 7]>
+<p class="browsehappy">You are using an <strong>outdated</strong> browser. Please <a href="http://browsehappy.com/">upgrade
+    your browser</a> to improve your experience.</p>
+<![endif]-->
+
+<div flex layout="row">
+    <div class="col-md-4">
+    </div>
+    <div class="col-md-4 form-login">
+            <section>
+
+                <div class="text-center">
+                    <img src="png/hotty_logo.png" width="60" height="60"/>
+                    <span class="h3 color-primary">HOTTY.SU</span>
+                </div>
+
+                <form name="form" class="form-signin ng-prestine" novalidate="novalidate"
+                      ng-controller="SignInController"
+                      ng-submit="signIn()">
+
+                    <fieldset>
+                        <label for="username" class="field-label">Имя пользователя</label>
+                        <input type="text" name="username" id="username" class="form-control"
+                               placeholder="Имя пользователя"
+                               ng-model="user.username"
+                               ng-required="true"
+                               ng-maxlength="20" autofocus=""/>
+
+                        <p class="error" ng-show="form.username.$invalid && form.username.$touched">
+                            Необходимо указать имя пользователя
+                        </p>
+
+                        <label for="password" class="field-label">Пароль</label>
+                        <input type="password" name="password" id="password" class="form-control"
+                               placeholder="Пароль"
+                               ng-model="user.password"
+                               ng-required="true"
+                               ng-maxlength="20"/>
+
+                        <p class="error" ng-show="form.password.$invalid && form.password.$touched">
+                            Необходимо ввести пароль
+                        </p>
+                    </fieldset>
+
+                    <br/>
+                    <div class="text-right">
+                        <button type="submit" class="btn btn-primary btn-width-short"
+                                ng-disabled="form.$invalid">Войти
+                        </button>
+                    </div>
+                </form>
+
+            </section>
+
+    </div>
+    <div class="col-md-4">
+    </div>
+</div>
+
+<script src="bower_components/angular/angular.min.js"></script>
+<script src="bower_components/angular-route/angular-route.min.js"></script>
+<script src="bower_components/angular-animate/angular-animate.min.js"></script>
+<script src="bower_components/angular-aria/angular-aria.min.js"></script>
+<script src="bower_components/angular-cookies/angular-cookies.min.js"></script>
+<script src="bower_components/angular-loader/angular-loader.min.js"></script>
+<script src="bower_components/angular-material/angular-material.min.js"></script>
+<script src="bower_components/angular-messages/angular-messages.min.js"></script>
+<script src="bower_components/angular-mocks/angular-mocks.js"></script>
+
+<script src="login.js"></script>
+
+</body>
+</html>

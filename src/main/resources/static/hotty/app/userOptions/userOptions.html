@@ -1,0 +1,68 @@
+
+<div class="row">
+  <div class="col-md-12">
+    <md-content layout-padding>
+      <div>
+        <form name="userForm">
+          <section layout="row" layout-sm="column" layout-align="end center" layout-wrap>
+            <md-button class="md-warn" ng-click="updateCurrentUser()" ng-hide="currentUser.id == undefined || currentUser.id == ''">{{ currentUser.statusId == 1 ? "Блокировать" : "Активировать" }}</md-button>
+            <md-button class="md-raised md-primary" ng-click="saveCurrentUser()"
+                       ng-disabled="currentUser.firstName == ''
+                           || currentUser.lastName == ''
+                           || currentUser.middleName == ''
+                           || currentUser.phone == ''
+                           || currentUser.email == ''">
+              Сохранить
+            </md-button>
+          </section>
+          <div layout-gt-sm="row">
+            <md-input-container class="md-block" flex-gt-sm>
+              <label>Фамилия</label>
+              <input required ng-model="currentUser.lastName">
+            </md-input-container>
+          </div>
+          <div layout-gt-sm="row">
+            <md-input-container class="md-block" flex-gt-sm>
+              <label>Имя</label>
+              <input required ng-model="currentUser.firstName">
+              <!--<div ng-messages="newForm.description.$error">
+                  <div ng-message="required">Поле обязательно для заполнения!</div>
+              </div>-->
+            </md-input-container>
+          </div>
+          <div layout-gt-sm="row">
+            <md-input-container class="md-block" flex-gt-sm>
+              <label>Отчество</label>
+              <input required ng-model="currentUser.middleName">
+            </md-input-container>
+          </div>
+          <div layout-gt-sm="row">
+            <md-input-container class="md-block" flex-gt-sm>
+              <label>Логин</label>
+              <input required ng-model="currentUser.username">
+            </md-input-container>
+          </div>
+          <div layout-gt-sm="row">
+            <md-input-container class="md-block" flex-gt-sm>
+              <label>Компания</label>
+              <input required ng-model="currentUser.company">
+            </md-input-container>
+          </div>
+          <div layout-gt-sm="row">
+            <md-input-container class="md-block" flex-gt-sm>
+              <label>Телефон</label>
+              <input required ng-model="currentUser.phone">
+            </md-input-container>
+          </div>
+          <div layout-gt-sm="row">
+            <md-input-container class="md-block" flex-gt-sm>
+              <label>Эл. почта</label>
+              <input required ng-model="currentUser.email">
+            </md-input-container>
+          </div>
+        </form>
+      </div>
+    </md-content>
+  </div>
+
+</div>

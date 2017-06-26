@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8"/>
+
+    <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.4.9/angular.min.js"></script>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/2.2.2/jquery.min.js"></script>
+    <link rel="stylesheet" href="https://ajax.googleapis.com/ajax/libs/jqueryui/1.11.4/themes/smoothness/jquery-ui.css"/>
+    <script src="https://ajax.googleapis.com/ajax/libs/jqueryui/1.11.4/jquery-ui.min.js"></script>
+    <script src="/hotty/app/bower_components/bootstrap/dist/js/bootstrap.min.js" type="text/javascript"></script>
+  <!--  <script src="resources/js/lib/jquery.selection.js" type="text/javascript"></script> -->
+    <script src="/hotty/app/blocks/blockPlugin.js" type="text/javascript"></script>
+    <script src="/hotty/app/blocks/imagePlugin.js" type="text/javascript"></script>
+    <script src="/hotty/app/blocks/textPlugin.js" type="text/javascript"></script>
+    <script src="/hotty/app/blocks/videoPlugin.js" type="text/javascript"></script>
+    <script src="/hotty/app/blocks/menuPlugin.js" type="text/javascript"></script>
+    <script src="/hotty/app/blocks/sliderPlugin.js" type="text/javascript"></script>
+    <script src="/hotty/app/blocks/sendmailPlugin.js" type="text/javascript"></script>
+
+    <script src="/hotty/app/blocks/front.js" type="text/javascript"></script>
+    <link rel="stylesheet" href="/hotty/app/bower_components/bootstrap/dist/css/bootstrap.min.css"/>
+    <link rel="stylesheet" href="/hotty/app/app.css"/>
+
+    <style>
+        .social .link {
+            float: left;
+            display: block;
+            margin-right: 8px;
+            width: 30px;
+            height: 30px;
+            filter: alpha(opacity=.4);
+            -webkit-opacity: .4;
+            -o-opacity: .4;
+            opacity: .4;
+            -webkit-transition: all .3s ease;
+            transition: all .3s ease;
+        }
+
+        .social .link.vk {
+            background: url(http://net868.ru/assets/svg/vk.svg);
+        }
+        .social .link.fa {
+            background: url(http://net868.ru/assets/svg/fa.svg);
+        }
+    </style>
+    <title>Title</title>
+</head>
+<body th:utext="*{page.htmltree}">
+
+</body>
+</html>
